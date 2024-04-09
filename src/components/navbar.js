@@ -18,7 +18,7 @@ const Navbar = () => {
           <>
 
             <Link
-              href="/profesor/mis-tutorias"
+            href={`/profesor/${user.uid}`}
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
             >
               Mis tutorias

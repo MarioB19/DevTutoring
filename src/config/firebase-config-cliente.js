@@ -1,6 +1,8 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+
 
 
 
@@ -16,12 +18,13 @@ const firebaseConfig = {
   
   
 
-
 // Inicializa Firebase
 const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+
 
 // Obtén una instancia de Firebase Auth
 const auth = getAuth(firebaseApp);
 
-export { firebaseApp, auth , signInWithEmailAndPassword, onAuthStateChanged}; // Exporta la app y la instancia de auth para usarlas en otros archivos
+export { firebaseApp, auth , signInWithEmailAndPassword, onAuthStateChanged, db}; // Exporta la app y la instancia de auth para usarlas en otros archivos
  

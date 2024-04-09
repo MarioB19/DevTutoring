@@ -8,6 +8,7 @@ const FormularioTutorias = ({ onSubmit }) => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -62,10 +63,16 @@ const FormularioTutorias = ({ onSubmit }) => {
     }
   }, [selectedDate, minDateTime.date]);
 
+
+  const onFormSubmit = async (data) => {
+    await onSubmit(data);  // Suponiendo que onSubmit maneja la lógica de envío
+    reset();  // Limpia el formulario después de enviar
+  };
+
   return (
     <>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onFormSubmit)}
         className="max-w-lg mx-auto my-10"
       >
         <div className="mb-6">

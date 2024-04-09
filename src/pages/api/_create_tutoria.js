@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       // Aquí debes adaptar los campos según los datos que envías desde tu formulario
-      const { id_profesor, title, description, area, linkMeet, fechaInicio, horaInicio ,costo} = req.body;
+      const { id_profesor, title, description, area, linkMeet, fechaInicio, horaInicio ,costo , foto} = req.body;
 
       const db = admin.firestore();
       const storage = admin.storage();
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
         horaInicio,
         fechaInicio,
         costo,
-        fotografia: ""
+        fotografia: foto
 
       });
 
