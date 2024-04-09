@@ -1,5 +1,5 @@
 export class Alumno {
-    constructor({ id, nombreCompleto, telefono, correoElectronico,username }) {
+    constructor({ id, nombreCompleto, telefono, correoElectronico }) {
       this.id = id;
       this.nombreCompleto = nombreCompleto;
 
