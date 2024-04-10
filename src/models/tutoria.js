@@ -11,10 +11,12 @@ export class Tutoria {
       linkMeet, 
       fechaInicio,
       horaInicio,
-      costo
+      costo,
+      reservada = false
     }) {
       this.id = id;
       this.id_alumno = id_alumno;
+      this.reservada = reservada;
       this.id_profesor = id_profesor;
       this.titulo = titulo;
       this.fechaInicio = fechaInicio;
@@ -31,6 +33,7 @@ export class Tutoria {
       toFirestore: (tutoria) => {
         return {
             costo: tutoria.costo,
+            reservada: tutoria.reservada,
        id_alumno: tutoria.id_alumno,
           id_profesor: tutoria.id_profesor,
           titulo: tutoria.titulo,
@@ -57,7 +60,8 @@ export class Tutoria {
           linkMeet: data.linkMeet,
           horaInicio: data.horaInicio,
           fechaInicio: data.fechaInicio,
-          costo: data.costo
+          costo: data.costo,
+          reservada: data.reservada
         });
       }
     }

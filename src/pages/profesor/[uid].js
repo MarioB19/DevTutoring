@@ -3,7 +3,16 @@ import { useRouter } from "next/router";
 import Navbar from "@/components/navbar";
 import { Tutoria } from "@/models/tutoria";
 import { db } from "@/config/firebase-config-cliente";
-import { collection, query, where, getDocs } from "firebase/firestore"; // Asegúrate de importar estas funciones
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  deleteDoc,
+} from "firebase/firestore"; // Asegúrate de importar estas funciones
+import { isFuture, isPast, parseISO } from "date-fns"; // Importa las funciones isFuture y isPast de date-fns
+import TutoriaCard from "@/components/view/card-tutoria-profesor";
 
 export async function getServerSideProps(context) {
   const { uid } = context.params;
@@ -23,12 +32,42 @@ export async function getServerSideProps(context) {
 }
 
 const GestorTutorias = ({ tutorias }) => {
-  // Recibe las tutorías como props
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
+  const [vistaActiva, setVistaActiva] = useState("futuras"); // Estado para manejar qué grupo de tutorías se muestra
+
+  // Filtra las tutorías basadas en la búsqueda y determina cuáles son futuras o pasadas
+  const tutoriasFiltradas = tutorias.filter((tutoria) =>
+    tutoria.titulo.toLowerCase().includes(busqueda.toLowerCase())
+  );
+  const tutoriasFuturas = tutoriasFiltradas.filter((tutoria) => {
+    // Combina fecha y hora en una sola cadena ISO
+    const dateTime = `${tutoria.fechaInicio}T${tutoria.horaInicio}`;
+    // Convierte la cadena ISO en un objeto Date
+    const date = parseISO(dateTime);
+    return isFuture(date);
+  });
+
+  const tutoriasPasadas = tutoriasFiltradas.filter((tutoria) => {
+    const dateTime = `${tutoria.fechaInicio}T${tutoria.horaInicio}`;
+    const date = parseISO(dateTime);
+    return isPast(date);
+  });
 
   const handleSearch = (event) => {
     setBusqueda(event.target.value);
+  };
+
+  const handleEliminarTutoria = async (id) => {
+    const tutoriaRef = doc(db, "tutorias", id);
+    try {
+      await deleteDoc(tutoriaRef);
+      router.reload();
+      console.log("Tutoría eliminada con éxito");
+      // Aquí podrías actualizar el estado o realizar otra acción después de eliminar la tutoría
+    } catch (error) {
+      console.error("Error al eliminar la tutoría: ", error);
+    }
   };
 
   return (
@@ -43,41 +82,50 @@ const GestorTutorias = ({ tutorias }) => {
             Crear Tutoría
           </button>
         </div>
-        <div className="text-center mt-4">
+        <div className="text-center mt-4 mb-8">
+          {" "}
           <input
             type="text"
             placeholder="Buscar tutorías..."
-            className="py-2 px-4 rounded border border-purple-300 text-black"
+            className="text-black mb-4 p-2 border rounded shadow w-1/2 bg-purple-100 border-purple-500 placeholder-purple-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
             value={busqueda}
             onChange={handleSearch}
           />
         </div>
 
+        <div className="flex justify-center space-x-4 mb-6">
+          <button
+            className={`px-4 py-2 rounded ${
+              vistaActiva === "futuras"
+                ? "bg-purple-700 text-white"
+                : "bg-white text-purple-700"
+            }`}
+            onClick={() => setVistaActiva("futuras")}
+          >
+            Tutorías Futuras
+          </button>
+          <button
+            className={`px-4 py-2 rounded ${
+              vistaActiva === "pasadas"
+                ? "bg-purple-700 text-white"
+                : "bg-white text-purple-700"
+            }`}
+            onClick={() => setVistaActiva("pasadas")}
+          >
+            Tutorías Pasadas
+          </button>
+        </div>
+
         <div className="grid grid-cols-3 gap-4 mt-4">
-          {tutorias
-            .filter((tutoria) =>
-              tutoria.titulo.toLowerCase().includes(busqueda.toLowerCase())
-            )
-            .map((tutoria) => (
-              <div
+          {(vistaActiva === "futuras" ? tutoriasFuturas : tutoriasPasadas).map(
+            (tutoria) => (
+              <TutoriaCard
                 key={tutoria.id}
-                className="max-w-sm rounded overflow-hidden shadow-lg bg-white"
-              >
-                <img
-                  className="w-full"
-                  src={tutoria.fotografia}
-                  alt="Imagen de la tutoría"
-                />
-                <div className="px-6 py-4">
-                  <div className="font-bold text-xl mb-2 text-purple-700">
-                    {tutoria.titulo}
-                  </div>
-                  <p className="text-gray-700 text-base">
-                    {tutoria.descripcion}
-                  </p>
-                </div>
-              </div>
-            ))}
+                tutoria={tutoria}
+                onEliminar={() => handleEliminarTutoria(tutoria.id)} // Suponiendo que tienes esta función
+              />
+            )
+          )}
         </div>
       </div>
     </>
