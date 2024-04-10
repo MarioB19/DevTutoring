@@ -12,7 +12,7 @@ import {
   deleteDoc,
 } from "firebase/firestore"; // Asegúrate de importar estas funciones
 import { isFuture, isPast, parseISO } from "date-fns"; // Importa las funciones isFuture y isPast de date-fns
-import TutoriaCard from "@/components/view/card-tutoria-profesor";
+import TutoriaCardProfesor from "@/components/view/card-tutoria-profesor";
 
 export async function getServerSideProps(context) {
   const { uid } = context.params;
@@ -119,7 +119,7 @@ const GestorTutorias = ({ tutorias }) => {
         <div className="grid grid-cols-3 gap-4 mt-4">
           {(vistaActiva === "futuras" ? tutoriasFuturas : tutoriasPasadas).map(
             (tutoria) => (
-              <TutoriaCard
+              <TutoriaCardProfesor
                 key={tutoria.id}
                 tutoria={tutoria}
                 onEliminar={() => handleEliminarTutoria(tutoria.id)} // Suponiendo que tienes esta función

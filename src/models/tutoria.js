@@ -1,3 +1,5 @@
+
+
 export class Tutoria {
     constructor({ 
       id, 
@@ -10,6 +12,7 @@ export class Tutoria {
       duracion = '1 hora', 
       linkMeet, 
       fechaInicio,
+      fechaCreacion = new Date(),
       horaInicio,
       costo,
       reservada = false
@@ -19,6 +22,7 @@ export class Tutoria {
       this.reservada = reservada;
       this.id_profesor = id_profesor;
       this.titulo = titulo;
+      this.fechaCreacion = fechaCreacion;
       this.fechaInicio = fechaInicio;
       this.descripcion = descripcion;
       this.fotografia = fotografia
@@ -37,6 +41,7 @@ export class Tutoria {
        id_alumno: tutoria.id_alumno,
           id_profesor: tutoria.id_profesor,
           titulo: tutoria.titulo,
+          fechaCreacion: tutoria.fechaCreacion,
           fechaInicio: tutoria.fechaInicio,
           descripcion: tutoria.descripcion,
           fotografia: tutoria.fotografia,
@@ -61,7 +66,8 @@ export class Tutoria {
           horaInicio: data.horaInicio,
           fechaInicio: data.fechaInicio,
           costo: data.costo,
-          reservada: data.reservada
+          reservada: data.reservada,
+          fechaCreacion: data.fechaCreacion
         });
       }
     }

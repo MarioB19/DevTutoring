@@ -4,7 +4,7 @@ import { confirmAlert } from 'react-confirm-alert'; // Importa confirmAlert
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Importa los estilos por defecto
 
 
-const TutoriaCard = ({ tutoria, onEliminar }) => {
+const TutoriaCardProfesor = ({ tutoria, onEliminar }) => {
 
   const handleEliminarTutoria = (id) => {
     confirmAlert({
@@ -87,4 +87,4 @@ const TutoriaCard = ({ tutoria, onEliminar }) => {
   );
 };
 
-export default TutoriaCard;
+export default TutoriaCardProfesor;
