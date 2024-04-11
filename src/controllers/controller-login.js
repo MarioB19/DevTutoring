@@ -12,9 +12,9 @@ const ControllerLogin = () => {
     if (!loading) {
       if (user) {
         if (tipo === "profesor") {
-          router.push('/profesor/');
+          router.push('/');
         } else if (tipo === "alumno") {
-          router.push('/alumno/');
+          router.push('/');
         }
       }
     }

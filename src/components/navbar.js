@@ -100,7 +100,7 @@ const Navbar = () => {
         <div className="flex items-center">
           {/* Logo como enlace a la página de inicio */}
           <Link
-            href="/ver-tutorias"
+            href="/"
             className="flex items-center cursor-pointer"
           >
             <Image
@@ -113,7 +113,7 @@ const Navbar = () => {
           </Link>
 
           <Link
-            href="/ver-tutorias"
+            href="/"
             className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
           >
             Ver tutorías
