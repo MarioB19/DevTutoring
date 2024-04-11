@@ -3,7 +3,8 @@ import Image from "next/image";
 import { confirmAlert } from "react-confirm-alert"; // Importa confirmAlert
 import "react-confirm-alert/src/react-confirm-alert.css"; // Importa los estilos por defecto
 import ToggleCardProfesor from "./toggle-card-profesor";
-import { render } from "react-dom";
+import { axios } from "axios";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const TutoriaCardView = ({ profesorTutoria, onComprar , type}) => {
   
@@ -47,13 +48,32 @@ const TutoriaCardView = ({ profesorTutoria, onComprar , type}) => {
     if(type === "alumno"){
       return (
         <div className="flex justify-start mb-[12px] ml-3"> {/* Ajusta los valores de mb y ml según tus necesidades */}
-    
-        <button
-          onClick={() => handleComprarTutoria(id)}
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-        >
-          Comprar
-        </button>
+
+
+<PayPalScriptProvider options={{ clientId: "AeebljmVdQuktuS4FyaIXDjI_JU29ceXgDaIlwy49WCuBrsVqktOKbEhlnkcl4n3URjmiUxXz1TVq2yR",  currency: "MXN"  }}>
+  <PayPalButtons
+    createOrder={async (data, actions) => {
+      try {
+        const res = await fetch("/api/payment", {
+          method: "POST",
+          body: JSON.stringify({ costo: costo}) // Asegúrate de enviar el costo correctamente, puede que necesites ajustar el formato
+        });
+        const orderData = await res.json();
+        return orderData.id; // Devuelve el ID de la orden
+      } catch (error) {
+        console.error("Error al crear la orden:", error);
+        throw new Error("No se pudo crear la orden"); // Lanza un error en caso de problemas
+      }
+    }}
+    onCancel={data => alert("Compra cancelada")}
+    onApprove={(data, actions) =>{
+      console.log(data);
+      actions.order.capture();
+    }}
+    style={{ layout: "horizontal" , color: "blue" }}
+  />
+</PayPalScriptProvider>
+
       </div>
       )
     }
