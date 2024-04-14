@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { isFuture, isPast, parseISO } from "date-fns"; 
 import TutoriaCardProfesor from "@/components/view/card-tutoria-profesor";
+import ProtectedRoute from "@/controllers/controller-protected-route";
 
 
 
@@ -95,6 +96,7 @@ const GestorTutorias = ({ tutoriasConAlumnos }) => {
 
   return (
     <>
+    <ProtectedRoute requiredType={"profesor"}>
       <Navbar />
       <div className="container mx-auto p-4">
         <div className="flex justify-end items-center mb-6">
@@ -149,6 +151,7 @@ const GestorTutorias = ({ tutoriasConAlumnos }) => {
           )}
         </div>
       </div>
+      </ProtectedRoute>
     </>
   );
 };

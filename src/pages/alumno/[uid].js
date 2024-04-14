@@ -13,6 +13,7 @@ getDoc
 } from "firebase/firestore";
 import { isFuture, isPast, parseISO } from "date-fns";
 import TutoriaCardView from "@/components/view/card-tutoria-view";
+import ProtectedRoute from "@/controllers/controller-protected-route";
 
 export async function getServerSideProps(context) {
   const { uid } = context.params;
@@ -91,10 +92,11 @@ const GestorTutorias = ({ profesoresTutorias }) => {
 
   return (
     <>
+    <ProtectedRoute requiredType={"alumno"}>
       <Navbar />
       <div className="container mx-auto p-4">
         <div className="flex justify-end items-center mb-6">
-          {/* Espacio para otros controles o información si es necesario */}
+    
         </div>
         <div className="text-center mt-4 mb-8">
           <input
@@ -143,6 +145,8 @@ const GestorTutorias = ({ profesoresTutorias }) => {
           )}
         </div>
       </div>
+
+      </ProtectedRoute>
     </>
   );
 };

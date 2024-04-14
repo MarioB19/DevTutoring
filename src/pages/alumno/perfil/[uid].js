@@ -7,6 +7,8 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
 import { useState } from "react";
 import { useRouter } from "next/router";
+
+import ProtectedRoute from "@/controllers/controller-protected-route";
 export default function Perfil({ user }) {
   const {
     register,
@@ -81,6 +83,7 @@ export default function Perfil({ user }) {
 
   return (
     <>
+    <ProtectedRoute requiredType={"alumno"}>
       <Navbar />
       <div className="max-w-lg mx-auto my-10">
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -169,6 +172,7 @@ export default function Perfil({ user }) {
 
         </form>
       </div>
+      </ProtectedRoute>
     </>
   );
 }

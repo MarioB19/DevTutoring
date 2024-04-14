@@ -137,8 +137,10 @@ const Tutorias = ({ profesoresTutorias }) => {
 
   return (
     <>
-      <Navbar />
+      <Navbar></Navbar>
+      
       <div>{renderView()}</div>
+      
     </>
   );
 };
