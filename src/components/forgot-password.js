@@ -24,11 +24,11 @@ function ForgotPassword() {
       for (let q of queries) {
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
-          // Si encontramos el correo en alguna de las colecciones, retornamos true
+   
           return true;
         }
       }
-      // Si terminamos el bucle sin encontrar el correo, retornamos false
+
       return false;
     } catch (error) {
       console.error("Error al verificar el correo electrónico:", error);
@@ -40,13 +40,12 @@ function ForgotPassword() {
     try {
       await sendPasswordResetEmail(auth, email);
       console.log("Correo de restablecimiento de contraseña enviado.");
-      // Informar al usuario que el correo ha sido enviado
-      // Puedes redirigir al usuario o limpiar el formulario aquí
+ 
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.error("Error en el envío del correo de restablecimiento: ", errorCode, errorMessage);
-      // Manejar errores aquí, como mostrar un mensaje al usuario
+  
     }
   }
   
@@ -54,7 +53,7 @@ function ForgotPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica para enviar correo de restablecimiento
+
     const existsCorreo = await emailExists(email);
 
     if(existsCorreo === false){

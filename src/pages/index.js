@@ -11,7 +11,7 @@ import {
   doc,
   getDoc,
   updateDoc
-} from "firebase/firestore"; // Asegúrate de importar estas funciones
+} from "firebase/firestore"; 
 
 
 import LoadingIndicator from "@/components/view/loading-indicator";
@@ -34,17 +34,17 @@ export async function getServerSideProps(context) {
   const querySnapshot = await getDocs(q);
   const tutorias = querySnapshot.docs.map((doc) => doc.data());
 
-  // Obtener los IDs de profesores únicos de las tutorías
+
   const profesoresIds = [...new Set(tutorias.map(tutoria => tutoria.id_profesor))];
 
-// Buscar los profesores por los IDs obtenidos
+
 const profesoresRefs = collection(db, "profesores");
 
 const profesoresPromises = profesoresIds.map(id_profesor => 
   getDoc(doc(profesoresRefs, id_profesor))
 );
 
-// Esperar a que todas las promesas de obtener los profesores se resuelvan
+
 const profesoresSnapshots = await Promise.all(profesoresPromises);
 
 const profesores = profesoresSnapshots.map(snapshot => ({
@@ -52,10 +52,10 @@ const profesores = profesoresSnapshots.map(snapshot => ({
   ...snapshot.data()
 }));
 
-// Combina las tutorías con los profesores correspondientes
+
 const profesoresTutorias = tutorias.map(tutoria => {
   const profesor = profesores.find(prof => prof.id === tutoria.id_profesor);
-  return { tutoria, profesor }; // aquí estamos creando un objeto con dos propiedades: tutoria y profesor
+  return { tutoria, profesor }; 
 });
 
 return {
@@ -70,9 +70,9 @@ const Tutorias = ({ profesoresTutorias }) => {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
 
-  const { loading, tipo, user } = useAuth(); // Asegúrate de que 'tipo' no es necesario si no lo usas
+  const { loading, tipo, user } = useAuth(); 
 
-  // Filtra las profesoresTutorias basadas en la búsqueda
+
   const tutoriasFiltradas = profesoresTutorias.filter((profesorTutoria) =>
     profesorTutoria.tutoria.titulo.toLowerCase().includes(busqueda.toLowerCase())
   );
@@ -82,22 +82,22 @@ const Tutorias = ({ profesoresTutorias }) => {
   };
 
   const handleComprarTutoria = async (id) => {
-    // Referencia al documento de la tutoría
+  
     const tutoriaRef = doc(db, "tutorias", id);
   
     try {
-      // Actualizar campos específicos del documento
+
       await updateDoc(tutoriaRef, {
-        reservada: true,      // Suponiendo que quieres marcar la tutoría como reservada
-        id_alumno: user.uid,    // UID del usuario que compra la tutoría
-        fechaCompra: new Date() // Fecha actual como la fecha de compra
+        reservada: true,    
+        id_alumno: user.uid,   
+        fechaCompra: new Date() 
       });
   
-      // Aquí podrías añadir cualquier otra lógica de post-proceso, como alertas o redirecciones
+    
       alert("Compra realizada con éxito!");
       router.reload();
     } catch (error) {
-      // Manejo de errores
+
       console.error("Error al comprar la tutoría: ", error);
       alert("Error al realizar la compra.");
     }

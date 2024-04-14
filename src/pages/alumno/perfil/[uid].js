@@ -1,9 +1,8 @@
-// pages/profesor/perfil.js
 import React from "react";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
 import Navbar from "@/components/navbar";
-import { storage,db } from "@/config/firebase-config-cliente"; // Asumiendo que tienes esta configuración
+import { storage,db } from "@/config/firebase-config-cliente"; 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
 import { useState } from "react";
@@ -21,34 +20,34 @@ export default function Perfil({ user }) {
     const alumnosRef = doc(db, "alumnos", user.uid);
   
     try {
-      // Actualizar campos específicos del documento
+
       await updateDoc(alumnosRef, {
-        nombreCompleto: nombreCompleto,      // Suponiendo que quieres marcar la tutoría como reservada
+        nombreCompleto: nombreCompleto,     
       });
 
       await handleUploadImage();
   
-      // Aquí podrías añadir cualquier otra lógica de post-proceso, como alertas o redirecciones
+
       alert("Informacion actualizada correctamente");
  
       router.reload();
     } catch (error) {
-      // Manejo de errores
+
       alert("Error al actualizar info: " +  error);
     
     }
 
   };
 
-  const [file, setFile] = useState(null); // Estado para guardar el archivo real
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(user.fotoUrl); // Estado para la URL de vista previa
+  const [file, setFile] = useState(null); 
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(user.fotoUrl); 
   
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFile(file); // Guarda el archivo
+      setFile(file);
       const imageUrl = URL.createObjectURL(file);
-      setImagePreviewUrl(imageUrl); // Guarda la URL de la imagen para la vista previa
+      setImagePreviewUrl(imageUrl); 
     }
   };
 
@@ -60,17 +59,17 @@ export default function Perfil({ user }) {
   };
 
   const handleUploadImage = async () => {
-    if (!file) return; // Usar 'file' en lugar de 'image'
+    if (!file) return; 
   
-    let imageUrl = ''; // Inicializar la URL de la imagen como vacía
+    let imageUrl = ''; 
   
     const storage = getStorage();
     const storageRef = ref(storage, `fotoPerfil/alumno/${user.uid}`);
   
-    // Cargar el archivo real
+   
     const snapshot = await uploadBytes(storageRef, file);
     
-    // Obtener la URL de la imagen cargada
+
     imageUrl = await getDownloadURL(snapshot.ref);
   
     const userRef = doc(db, "alumnos", user.uid);
@@ -175,7 +174,7 @@ export default function Perfil({ user }) {
 }
 
 export async function getServerSideProps(context) {
-  const { uid } = context.params; // O obtén el ID del usuario de alguna forma (ej., sesión)
+  const { uid } = context.params; 
 
   const userDocRef = doc(db, "alumnos", uid);
   const docSnap = await getDoc(userDocRef);
@@ -189,7 +188,7 @@ export async function getServerSideProps(context) {
   const user = {
     nombreCompleto: docSnap.data().nombreCompleto,
     email: docSnap.data().correoElectronico,
-    fotoUrl: docSnap.data().fotoPerfil, // Fallback a imagen por defecto
+    fotoUrl: docSnap.data().fotoPerfil, 
     uid: uid
   };
 

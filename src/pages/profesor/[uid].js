@@ -11,8 +11,8 @@ import {
   doc,
   deleteDoc,
   getDoc,
-} from "firebase/firestore"; // Asegúrate de importar estas funciones
-import { isFuture, isPast, parseISO } from "date-fns"; // Importa las funciones isFuture y isPast de date-fns
+} from "firebase/firestore";
+import { isFuture, isPast, parseISO } from "date-fns"; 
 import TutoriaCardProfesor from "@/components/view/card-tutoria-profesor";
 
 
@@ -44,7 +44,7 @@ export async function getServerSideProps(context) {
   const tutoriasConAlumnos = tutorias.map(tutoria => {
     const alumnoData = tutoria.reservada ? alumnos[tutoria.id_alumno] : null;
     return {
-      tutoria: { ...tutoria, id_alumno: undefined }, // Remover id_alumno de tutoria
+      tutoria: { ...tutoria, id_alumno: undefined },
       alumno: alumnoData
     };
   });
@@ -63,7 +63,7 @@ const GestorTutorias = ({ tutoriasConAlumnos }) => {
   const [busqueda, setBusqueda] = useState("");
   const [vistaActiva, setVistaActiva] = useState("futuras");
 
-  // Filtra las tutorías basadas en la búsqueda y determina cuáles son futuras o pasadas
+
   const tutoriasFiltradas = tutoriasConAlumnos.filter(({ tutoria }) =>
     tutoria.titulo.toLowerCase().includes(busqueda.toLowerCase())
   );

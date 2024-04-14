@@ -12,24 +12,23 @@ export default async function handler(req, res) {
 
 
   try {
-    const { nombreCompleto, fechaNacimiento, correoElectronico, telefono, descripcionPerfil, tipoUsuario,password } = req.body;
+    const { nombreCompleto, fechaNacimiento, correoElectronico, descripcionPerfil, tipoUsuario,password } = req.body;
 
 
       const userRecord = await admin.auth().createUser({
         email: correoElectronico,
-        password: password, // Aquí debes establecer la contraseña del usuario
+        password: password, 
       });
       console.log("Usuario creado exitosamente:", userRecord.uid);
 
 
-    // Declarar document aquí
+
     let document;
 
     if (tipoUsuario === "alumno") {
       const nuevoAlumno = new Alumno({
         correoElectronico,
         nombreCompleto,
-        telefono,
 
       });
 
@@ -41,9 +40,7 @@ export default async function handler(req, res) {
         nombreCompleto,
         fechaNacimiento: fechaNacimientoTimestamp,
         correoElectronico,
-        telefono,
         descripcionPerfil,
-
       });
 
       const profesor = new FirestoreInstance("profesores", Profesor.converter);

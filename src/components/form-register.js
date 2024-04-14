@@ -95,26 +95,7 @@ const RegistroFormulario = ({ onSubmit }) => {
             )}
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="telefono" className="block mb-2">
-              Teléfono
-            </label>
-            <input
-              {...register("telefono", {
-                required: "Este campo es requerido",
-                pattern: {
-                  value: /^\d{10}$/,
-                  message: "Teléfono no válido, debe tener 10 dígitos",
-                },
-              })}
-              type="text"
-              id="telefono"
-              className="w-full px-3 py-2 border rounded-md bg-gray-200 text-gray-800"
-            />
-            {errors.telefono && (
-              <p className="text-red-600">{errors.telefono.message}</p>
-            )}
-          </div>
+   
 
           {tipoUsuario === "profesor" && (
             <>

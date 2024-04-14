@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ProfesorCard from './card-profesor';
 import Image from "next/image";
 
-const ToggleCardProfesor = ({ profesor }) => { // Asumiendo que 'profesor' se pasa como prop
+const ToggleCardProfesor = ({ profesor }) => { 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
 
   const handleImageClick = () => {
@@ -13,7 +13,6 @@ const ToggleCardProfesor = ({ profesor }) => { // Asumiendo que 'profesor' se pa
     setMostrarTarjeta(false);
   };
 
-  // Cierra el modal si se hace clic fuera del contenido del ProfesorCard
   const handleBackdropClick = (e) => {
     if (e.target.id === "backdrop") {
       handleClose();
@@ -22,10 +21,10 @@ const ToggleCardProfesor = ({ profesor }) => { // Asumiendo que 'profesor' se pa
 
   return (
     <div>
-          <div className="absolute bottom-0 right-0 mr-[1rem]"> {/* Ajusta el margen negativo aquí */}
+          <div className="absolute bottom-0 right-0 mr-[1rem]"> 
           <div className="w-12 h-12 mb-1 relative" onClick={handleImageClick} style={{ cursor: 'pointer' }}>
       <Image
-        src= {profesor.fotoPerfil} // Sustituye esto por la URL de tu imagen
+        src= {profesor.fotoPerfil} 
         alt="Foto del creador"
         layout="fill"
         className="rounded-full object-cover"

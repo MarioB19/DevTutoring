@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { confirmAlert } from "react-confirm-alert"; // Importa confirmAlert
-import "react-confirm-alert/src/react-confirm-alert.css"; // Importa los estilos por defecto
+
+import "react-confirm-alert/src/react-confirm-alert.css"; 
 import ToggleCardProfesor from "./toggle-card-profesor";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { format, parseISO } from 'date-fns';
@@ -9,8 +9,8 @@ import { format, parseISO } from 'date-fns';
 const TutoriaCardView = ({ profesorTutoria, onComprar, type }) => {
 
   function formatDateString(dateString) {
-    const date = parseISO(dateString); // Convierte la cadena ISO a un objeto Date
-    return format(date, 'dd/MM/yyyy'); // Formatea la fecha al formato deseado
+    const date = parseISO(dateString); 
+    return format(date, 'dd/MM/yyyy'); 
   }
 
   
@@ -40,7 +40,7 @@ const TutoriaCardView = ({ profesorTutoria, onComprar, type }) => {
       return (
         <div className="flex justify-start mb-[12px] ml-3">
           {" "}
-          {/* Ajusta los valores de mb y ml según tus necesidades */}
+    
           <PayPalScriptProvider
             options={{
               clientId:
@@ -53,13 +53,13 @@ const TutoriaCardView = ({ profesorTutoria, onComprar, type }) => {
                 try {
                   const res = await fetch("/api/payment", {
                     method: "POST",
-                    body: JSON.stringify({ costo: costo }), // Asegúrate de enviar el costo correctamente, puede que necesites ajustar el formato
+                    body: JSON.stringify({ costo: costo }),
                   });
                   const orderData = await res.json();
-                  return orderData.id; // Devuelve el ID de la orden
+                  return orderData.id;
                 } catch (error) {
                   console.error("Error al crear la orden:", error);
-                  throw new Error("No se pudo crear la orden"); // Lanza un error en caso de problemas
+                  throw new Error("No se pudo crear la orden"); 
                 }
               }}
               onCancel={(data) => alert("Compra cancelada")}

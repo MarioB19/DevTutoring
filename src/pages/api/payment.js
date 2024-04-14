@@ -1,7 +1,7 @@
-// Importar correctamente el módulo de PayPal
+
 import paypal from "@paypal/checkout-server-sdk";
 
-// Crear un ambiente
+
 const clientId =  process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const environment = new paypal.core.SandboxEnvironment(clientId, clientSecret);
@@ -46,7 +46,6 @@ export default function POST(req, res) {
         ]
       });
 
-      // Ejecutar la solicitud
       client.execute(request)
         .then(response => {
           console.log(response);

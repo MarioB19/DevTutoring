@@ -1,4 +1,3 @@
-// pages/create-tutorial.js
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -12,16 +11,16 @@ const FormularioTutorias = ({ onSubmit }) => {
     formState: { errors },
   } = useForm();
 
-  const watchFoto = watch("foto"); // Observa el input de archivo
+  const watchFoto = watch("foto"); 
   const [fotoURL, setFotoURL] = useState("");
 
   useEffect(() => {
-    // Crea una URL de objeto cuando se selecciona un archivo y limpia en el desmontaje
+ 
     if (watchFoto && watchFoto.length > 0) {
       const file = watchFoto[0];
       setFotoURL(URL.createObjectURL(file));
 
-      // Limpieza de la URL de objeto
+ 
       return () => {
         URL.revokeObjectURL(fotoURL);
       };
@@ -42,11 +41,11 @@ const FormularioTutorias = ({ onSubmit }) => {
     setMinDateTime({ date, time });
   }, []);
 
-  // Mira los cambios en la fecha para actualizar el tiempo mínimo permitido
+ 
   const selectedDate = watch("fechaInicio");
   useEffect(() => {
     if (selectedDate === minDateTime.date) {
-      // Es hoy, establece la hora mínima
+ 
       const now = new Date();
       let hours = now.getHours().toString().padStart(2, "0");
       let minutes = now.getMinutes().toString().padStart(2, "0");
@@ -55,7 +54,7 @@ const FormularioTutorias = ({ onSubmit }) => {
         time: `${hours}:${minutes}`,
       }));
     } else {
-      // Cualquier otro día, no hay restricción de tiempo
+
       setMinDateTime((prevState) => ({
         ...prevState,
         time: "",
@@ -65,8 +64,8 @@ const FormularioTutorias = ({ onSubmit }) => {
 
 
   const onFormSubmit = async (data) => {
-    await onSubmit(data);  // Suponiendo que onSubmit maneja la lógica de envío
-    reset();  // Limpia el formulario después de enviar
+    await onSubmit(data);  
+    reset();  
   };
 
   return (

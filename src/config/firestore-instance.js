@@ -1,4 +1,4 @@
-import {admin} from './firebase-config-admin' // Ajusta la ruta según sea necesario
+import {admin} from './firebase-config-admin' 
 
 export class FirestoreInstance {
   constructor(name, converter) {

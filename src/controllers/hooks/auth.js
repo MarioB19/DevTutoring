@@ -35,7 +35,7 @@ const useAuth = () => {
       }
     });
 
-    // Limpiar la suscripción al desmontar
+
     return () => unsubscribe();
   }, []);
 

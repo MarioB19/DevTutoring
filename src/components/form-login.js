@@ -15,12 +15,9 @@ const InicioFormulario = ({ onSubmit }) => {
       <Navbar> </Navbar>
 
       <div className="max-w-md mx-auto mt-8 p-6 bg-gray-100 rounded-lg text-black">
-
-        {/* Se aplica el color de texto blanco a todo el formulario */}
         <h2 className="text-xl font-bold mb-4">Inicio de Sesion</h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-            
           <div className="mb-4">
             <label htmlFor="correoElectronico" className="block mb-2">
               Correo Electronico
@@ -42,8 +39,6 @@ const InicioFormulario = ({ onSubmit }) => {
               <p className="text-red-600">{errors.correoElectronico.message}</p>
             )}
           </div>
-
-          {/* Fin del enlace de registro */}
 
           <div className="mb-4">
             <label htmlFor="password" className="block mb-2">
@@ -70,22 +65,19 @@ const InicioFormulario = ({ onSubmit }) => {
           </button>
         </form>
 
-        {/* Agregar un enlace de registro */}
         <div className="mb-4 text-center">
-  <p className="mb-4">
-    ¿No tienes una cuenta?{" "}
-    <a href="/register" className="text-blue-500 hover:underline">
-      Regístrate aquí
-    </a>
-  </p>
+          <p className="mb-4">
+            ¿No tienes una cuenta?{" "}
+            <a href="/register" className="text-blue-500 hover:underline">
+              Regístrate aquí
+            </a>
+          </p>
 
-  <ForgotPassword></ForgotPassword>
-</div>
-
+          <ForgotPassword></ForgotPassword>
+        </div>
       </div>
     </>
   );
 };
-
 
 export default InicioFormulario;

@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { confirmAlert } from "react-confirm-alert"; // Importa confirmAlert
-import "react-confirm-alert/src/react-confirm-alert.css"; // Importa los estilos por defecto
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css"; 
 
 import { format, parseISO } from 'date-fns';
 import ToggleCardAlumno from "./toggle-card-alumno";
@@ -9,8 +9,8 @@ import ToggleCardAlumno from "./toggle-card-alumno";
 const TutoriaCardProfesor = ({ tutoria, onEliminar , alumno}) => {
 
   function formatDateString(dateString) {
-    const date = parseISO(dateString); // Convierte la cadena ISO a un objeto Date
-    return format(date, 'dd/MM/yyyy'); // Formatea la fecha al formato deseado
+    const date = parseISO(dateString); 
+    return format(date, 'dd/MM/yyyy'); 
   }
 
   
@@ -67,7 +67,7 @@ const TutoriaCardProfesor = ({ tutoria, onEliminar , alumno}) => {
     <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden flex flex-col relative">
       {fotografia && (
         <div className="w-full h-48 relative">
-          {/* La imagen se ajustará al contenedor manteniendo su proporción */}
+
           <Image
             src={fotografia}
             alt={`Imagen de la tutoría ${titulo}`}

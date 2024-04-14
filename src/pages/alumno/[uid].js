@@ -10,8 +10,8 @@ import {
   getDocs,
   doc,
 getDoc
-} from "firebase/firestore"; // Asegúrate de importar estas funciones
-import { isFuture, isPast, parseISO } from "date-fns"; // Importa las funciones isFuture y isPast de date-fns
+} from "firebase/firestore";
+import { isFuture, isPast, parseISO } from "date-fns";
 import TutoriaCardView from "@/components/view/card-tutoria-view";
 
 export async function getServerSideProps(context) {
@@ -30,17 +30,16 @@ export async function getServerSideProps(context) {
   const querySnapshot = await getDocs(q);
   const tutorias = querySnapshot.docs.map((doc) => doc.data());
 
-  // Obtener los IDs de profesores únicos de las tutorías
+
   const profesoresIds = [...new Set(tutorias.map(tutoria => tutoria.id_profesor))];
 
-// Buscar los profesores por los IDs obtenidos
 const profesoresRefs = collection(db, "profesores");
 
 const profesoresPromises = profesoresIds.map(id_profesor => 
   getDoc(doc(profesoresRefs, id_profesor))
 );
 
-// Esperar a que todas las promesas de obtener los profesores se resuelvan
+
 const profesoresSnapshots = await Promise.all(profesoresPromises);
 
 const profesores = profesoresSnapshots.map(snapshot => ({
@@ -48,10 +47,10 @@ const profesores = profesoresSnapshots.map(snapshot => ({
   ...snapshot.data()
 }));
 
-// Combina las tutorías con los profesores correspondientes
+
 const profesoresTutorias = tutorias.map(tutoria => {
   const profesor = profesores.find(prof => prof.id === tutoria.id_profesor);
-  return { tutoria, profesor }; // aquí estamos creando un objeto con dos propiedades: tutoria y profesor
+  return { tutoria, profesor }; 
 });
 
 return {
@@ -68,9 +67,8 @@ return {
 const GestorTutorias = ({ profesoresTutorias }) => {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
-  const [vistaActiva, setVistaActiva] = useState("futuras"); // Estado para manejar qué grupo de tutorías se muestra
+  const [vistaActiva, setVistaActiva] = useState("futuras"); 
 
-  // Filtra las tutorías basadas en la búsqueda y determina cuáles son futuras o pasadas
   const tutoriasFiltradas = profesoresTutorias.filter(({ tutoria }) =>
     tutoria.titulo.toLowerCase().includes(busqueda.toLowerCase())
   );

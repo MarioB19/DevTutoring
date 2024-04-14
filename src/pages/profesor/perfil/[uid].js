@@ -1,11 +1,10 @@
-// pages/profesor/perfil.js
 import React from "react";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
 import Navbar from "@/components/navbar";
-import { storage,db } from "@/config/firebase-config-cliente"; // Asumiendo que tienes esta configuración
+import { storage, db } from "@/config/firebase-config-cliente";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import { useState } from "react";
 import { useRouter } from "next/router";
 export default function Perfil({ user }) {
@@ -18,43 +17,36 @@ export default function Perfil({ user }) {
   const router = useRouter();
   const onSubmit = async (data) => {
     const nombreCompleto = data.nombreCompleto;
-    const descripcionExperiencias = data.descripcionExperiencias
+    const descripcionExperiencias = data.descripcionExperiencias;
     const profesorRef = doc(db, "profesores", user.uid);
-  
+
     try {
-      // Actualizar campos específicos del documento
       await updateDoc(profesorRef, {
-        nombreCompleto: nombreCompleto,  
-        descripcionPerfil: descripcionExperiencias    // Suponiendo que quieres marcar la tutoría como reservada
+        nombreCompleto: nombreCompleto,
+        descripcionPerfil: descripcionExperiencias,
       });
 
       await handleUploadImage();
-  
-      // Aquí podrías añadir cualquier otra lógica de post-proceso, como alertas o redirecciones
+
       alert("Informacion actualizada correctamente");
- 
+
       router.reload();
     } catch (error) {
-      // Manejo de errores
-      alert("Error al actualizar info: " +  error);
-    
+      alert("Error al actualizar info: " + error);
     }
-
   };
 
-  const [file, setFile] = useState(null); // Estado para guardar el archivo real
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(user.fotoUrl); // Estado para la URL de vista previa
-  
+  const [file, setFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(user.fotoUrl);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFile(file); // Guarda el archivo
+      setFile(file);
       const imageUrl = URL.createObjectURL(file);
-      setImagePreviewUrl(imageUrl); // Guarda la URL de la imagen para la vista previa
+      setImagePreviewUrl(imageUrl);
     }
   };
-
-  
 
   const handleEditPicture = () => {
     const fileInput = document.getElementById("imageInput");
@@ -62,25 +54,22 @@ export default function Perfil({ user }) {
   };
 
   const handleUploadImage = async () => {
-    if (!file) return; // Usar 'file' en lugar de 'image'
-  
-    let imageUrl = ''; // Inicializar la URL de la imagen como vacía
-  
+    if (!file) return;
+
+    let imageUrl = "";
+
     const storage = getStorage();
     const storageRef = ref(storage, `fotoPerfil/profesor/${user.uid}`);
-  
-    // Cargar el archivo real
+
     const snapshot = await uploadBytes(storageRef, file);
-    
-    // Obtener la URL de la imagen cargada
+
     imageUrl = await getDownloadURL(snapshot.ref);
-  
+
     const userRef = doc(db, "profesores", user.uid);
     await updateDoc(userRef, {
       fotoPerfil: imageUrl,
     });
   };
-  
 
   return (
     <>
@@ -91,9 +80,12 @@ export default function Perfil({ user }) {
           <div className="relative mb-6 text-center">
             {/* Muestra la imagen seleccionada o la imagen por defecto */}
             <div className="relative w-24 h-24 mx-auto overflow-hidden rounded-full">
-              <Image src={imagePreviewUrl} layout="fill" className="rounded-full" />
+              <Image
+                src={imagePreviewUrl}
+                layout="fill"
+                className="rounded-full"
+              />
             </div>
-
 
             <input
               type="file"
@@ -108,7 +100,6 @@ export default function Perfil({ user }) {
               onClick={handleEditPicture}
               style={{ transform: "translate(50%, 50%)" }}
             >
-
               ✏️
             </button>
           </div>
@@ -146,32 +137,30 @@ export default function Perfil({ user }) {
           </div>
 
           <div className="mb-6">
-  <label
-    htmlFor="descripcionExperiencias"
-    className="block mb-2 text-sm font-medium text-black"
-  >
-    Descripción de Experiencias
-  </label>
-  <textarea
-    id="descripcionExperiencias"
-    defaultValue={user.descripcionExperiencias}
-    {...register("descripcionExperiencias", {
-      required: "Este campo es obligatorio.",
-      minLength: {
-        value: 20,
-        message: "La descripción debe tener al menos 10 caracteres.",
-      },
-
-    })}
-    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-40 overflow-auto"
-  />
-  {errors.descripcionExperiencias && (
-    <p className="text-red-500 text-xs mt-1">
-      {errors.descripcionExperiencias.message}
-    </p>
-  )}
-</div>
-
+            <label
+              htmlFor="descripcionExperiencias"
+              className="block mb-2 text-sm font-medium text-black"
+            >
+              Descripción de Experiencias
+            </label>
+            <textarea
+              id="descripcionExperiencias"
+              defaultValue={user.descripcionExperiencias}
+              {...register("descripcionExperiencias", {
+                required: "Este campo es obligatorio.",
+                minLength: {
+                  value: 20,
+                  message: "La descripción debe tener al menos 10 caracteres.",
+                },
+              })}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-40 overflow-auto"
+            />
+            {errors.descripcionExperiencias && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.descripcionExperiencias.message}
+              </p>
+            )}
+          </div>
 
           {/* Email */}
           <div className="mb-6">
@@ -197,7 +186,6 @@ export default function Perfil({ user }) {
           >
             Actualizar perfil
           </button>
-
         </form>
       </div>
     </>
@@ -205,7 +193,7 @@ export default function Perfil({ user }) {
 }
 
 export async function getServerSideProps(context) {
-  const { uid } = context.params; // O obtén el ID del usuario de alguna forma (ej., sesión)
+  const { uid } = context.params;
 
   const userDocRef = doc(db, "profesores", uid);
   const docSnap = await getDoc(userDocRef);
@@ -219,10 +207,10 @@ export async function getServerSideProps(context) {
   const user = {
     nombreCompleto: docSnap.data().nombreCompleto,
     email: docSnap.data().correoElectronico,
-    fotoUrl: docSnap.data().fotoPerfil, // Fallback a imagen por defecto
+    fotoUrl: docSnap.data().fotoPerfil, 
     descripcionExperiencias: docSnap.data().descripcionPerfil,
 
-    uid: uid
+    uid: uid,
   };
 
   return {

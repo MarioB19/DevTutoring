@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-// InfoCard.js
+
 const InfoCard = ({ title, image, description }) => {
     return (
       <div className="flex flex-col max-w-sm rounded overflow-hidden shadow-lg h-full">

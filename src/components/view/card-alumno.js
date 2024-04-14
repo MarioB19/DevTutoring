@@ -14,7 +14,7 @@ const AlumnoCard = ({
           src={fotoPerfil}
           alt="Foto de perfil"
           layout="fill"
-          className="rounded-full" // Hace la imagen redonda
+          className="rounded-full" 
         />
       </div>
       <div className="px-6 py-4">

@@ -53,39 +53,8 @@ const TutoringSection = () => {
         description="Desarrolla aplicaciones para dispositivos móviles, utilizando Swift para iOS, Kotlin para Android, o frameworks multiplataforma como Flutter o React Native."
       />
       
-  {/*
-      <InfoCard
-        title="Ciencias de la Computación y Teoría de la Computación"
-        image="/programacion-ciencia.jpg"
-        description="Explora conceptos teóricos subyacentes como complejidad computacional, estructuras de datos, algoritmos avanzados, y teoría de grafos."
-      />
-      
-      <InfoCard
-        title="Desarrollo de Videojuegos"
-        image="/programacion-videojuegos.jpg"
-        description="Aprende sobre la creación de videojuegos, incluyendo gráficos por computadora, física de juegos, inteligencia artificial en juegos, y motores de juegos como Unity o Unreal Engine."
-      />
-      
-      <InfoCard
-        title="Inteligencia Artificial y Aprendizaje Automático"
-        image="/programacion-ia.jpg"
-        description="Adéntrate en la creación de sistemas que pueden aprender de los datos o imitar la inteligencia humana, utilizando algoritmos de aprendizaje automático y profundo."
-      />
-
-      <InfoCard
-      title="Seguridad Informática"
-      image="/programacion-seguridad.jpg"
-      description="Enfócate en la protección de la información y los sistemas, aprendiendo sobre criptografía, seguridad de redes, pruebas de penetración, y aspectos éticos y legales de la seguridad."
-    />
-
-    */
-  }
       
   
-      
-   
-      
-
 
 </CardsGrid>
 

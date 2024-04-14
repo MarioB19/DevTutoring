@@ -1,4 +1,3 @@
-// Controlador.js
 import React from 'react';
 import RegistroFormulario from '../components/form-register';
 import { useRouter } from 'next/router';
@@ -16,8 +15,6 @@ const ControllerRegister = () => {
         },
         body: JSON.stringify(data),
       });
-
-    
 
       if (response.ok) {
         alert("Usuario registrado correctamente");

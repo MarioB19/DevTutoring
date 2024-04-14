@@ -78,8 +78,7 @@ const AboutPage = () => {
               Integrantes
             </h2>
             <div className="grid md:grid-cols-3 gap-3">
-              {/* Iterar sobre un array de integrantes para renderizar las tarjetas */}
-              {/* Aquí colocarías un .map si estuvieras iterando sobre datos */}
+           
               <MemberCard
                 name="Mario Brandon Muro Ramos"
                 role="Founder and Dev"

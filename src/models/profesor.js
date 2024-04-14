@@ -1,9 +1,9 @@
 export class Profesor {
-  constructor({ id, nombreCompleto, fechaNacimiento, telefono, correoElectronico, descripcionPerfil,username }) {
+  constructor({ id, nombreCompleto, fechaNacimiento, correoElectronico, descripcionPerfil,username }) {
     this.id = id;
     this.nombreCompleto = nombreCompleto;
     this.fechaNacimiento = fechaNacimiento;
-    this.telefono = telefono;
+
     this.correoElectronico = correoElectronico;
     this.descripcionPerfil = descripcionPerfil;
     this.fotoPerfil = "https://firebasestorage.googleapis.com/v0/b/ssmat-96fb9.appspot.com/o/fotoPerfilDefault.png?alt=media&token=fcf39337-8730-4bcc-ba26-0f7b6bbd44fc";
@@ -15,7 +15,7 @@ export class Profesor {
       return {
         nombreCompleto: profesor.nombreCompleto,
         fechaNacimiento: profesor.fechaNacimiento,
-        telefono: profesor.telefono,
+  
         correoElectronico: profesor.correoElectronico,
         descripcionPerfil: profesor.descripcionPerfil,
         fotoPerfil: profesor.fotoPerfil,
@@ -28,7 +28,7 @@ export class Profesor {
         id: snapshot.id,
         nombreCompleto: data.nombreCompleto,
         fechaNacimiento: data.fechaNacimiento,
-        telefono: data.telefono,
+  
         correoElectronico: data.correoElectronico,
         descripcionPerfil: data.descripcionPerfil,
         fotoPerfil: data.fotoPerfil,

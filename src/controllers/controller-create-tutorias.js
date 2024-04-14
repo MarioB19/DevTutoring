@@ -1,8 +1,8 @@
-// Controlador.js
+
 import React from 'react';
 import FormularioTutorias from '@/components/form-tutorias';
 import useAuth from './hooks/auth';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Importar funciones de Firebase Storage
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; 
 import { useRouter } from 'next/navigation';
 const ControllerCreateTutorias = () => {
     const { user } = useAuth(); 
@@ -10,23 +10,23 @@ const ControllerCreateTutorias = () => {
 
     const handleSubmit = async (data) => {
         try {
-            // Primero, manejar la carga de la imagen si existe
-            let imageUrl = ''; // Inicializar la URL de la imagen como vacía
+
+            let imageUrl = ''; 
             if (data.foto && data.foto.length > 0) {
                 const storage = getStorage();
                 const storageRef = ref(storage, `imageTutorias/${user.uid}/${data.foto[0].name}`);
 
-                // Cargar la imagen
+             
                 const snapshot = await uploadBytes(storageRef, data.foto[0]);
                 
-                // Obtener la URL de la imagen cargada
+              
                 imageUrl = await getDownloadURL(snapshot.ref);
             }
 
             const requestData = {
                 ...data,
                 id_profesor: user.uid,
-                foto: imageUrl, // Agregar la URL de la imagen al requestData
+                foto: imageUrl,
             };
 
           
