@@ -2,8 +2,8 @@
 import paypal from "@paypal/checkout-server-sdk";
 
 // Crear un ambiente
-const clientId = "AeebljmVdQuktuS4FyaIXDjI_JU29ceXgDaIlwy49WCuBrsVqktOKbEhlnkcl4n3URjmiUxXz1TVq2yR";
-const clientSecret = "EBEGArJ09_mscFVX4Nv_TxDXTCcaU-Ye3HSfzn3oI-ifDVQznbRoXSWmKtIT4TwWOkU1X-A5Kq7geFn2";
+const clientId =  process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
 const environment = new paypal.core.SandboxEnvironment(clientId, clientSecret);
 const client = new paypal.core.PayPalHttpClient(environment);
 
@@ -12,7 +12,7 @@ export default function POST(req, res) {
     try {
         const requestBody = JSON.parse(req.body);
 
-        // Obtener el costo del cuerpo de la solicitud
+
         const costo = requestBody.costo;
   
 

@@ -3,7 +3,17 @@ import Image from "next/image";
 import { confirmAlert } from "react-confirm-alert"; // Importa confirmAlert
 import "react-confirm-alert/src/react-confirm-alert.css"; // Importa los estilos por defecto
 
-const TutoriaCardProfesor = ({ tutoria, onEliminar }) => {
+import { format, parseISO } from 'date-fns';
+import ToggleCardAlumno from "./toggle-card-alumno";
+
+const TutoriaCardProfesor = ({ tutoria, onEliminar , alumno}) => {
+
+  function formatDateString(dateString) {
+    const date = parseISO(dateString); // Convierte la cadena ISO a un objeto Date
+    return format(date, 'dd/MM/yyyy'); // Formatea la fecha al formato deseado
+  }
+
+  
   const handleEliminarTutoria = (id) => {
     confirmAlert({
       title: "Confirmar eliminación",
@@ -29,7 +39,10 @@ const TutoriaCardProfesor = ({ tutoria, onEliminar }) => {
     reservada,
     id,
     fotografia,
+    fechaInicio,
+    horaInicio,
   } = tutoria;
+
   var area = "";
   switch (areaProgramacion) {
     case "01":
@@ -47,8 +60,11 @@ const TutoriaCardProfesor = ({ tutoria, onEliminar }) => {
       break;
   }
 
+  const dateFormated = formatDateString(fechaInicio);
+
+
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+    <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden flex flex-col relative">
       {fotografia && (
         <div className="w-full h-48 relative">
           {/* La imagen se ajustará al contenedor manteniendo su proporción */}
@@ -66,6 +82,7 @@ const TutoriaCardProfesor = ({ tutoria, onEliminar }) => {
           <p className="text-gray-700 text-base mb-4">{descripcion}</p>
           <p className="text-black text-base mb-2">Área: {area}</p>
           <p className="text-red-600 text-xl mb-1">Costo: ${costo}</p>
+          <p className="text-green-900 font-bold text-base mb-2">Fecha: {dateFormated} a las {horaInicio}</p>
           <a
             href={linkMeet}
             className="text-blue-600 hover:underline"
@@ -92,7 +109,15 @@ const TutoriaCardProfesor = ({ tutoria, onEliminar }) => {
               Eliminar
             </button>
           )}
+
+
+          {reservada && (
+            <ToggleCardAlumno alumno={alumno}></ToggleCardAlumno>
+          )}
+
+       
         </div>
+   
       </div>
     </div>
   );

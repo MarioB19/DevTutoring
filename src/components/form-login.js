@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/navbar";
 import { useForm } from "react-hook-form";
+import ForgotPassword from "@/components/forgot-password";
 
 const InicioFormulario = ({ onSubmit }) => {
   const {
@@ -14,7 +15,7 @@ const InicioFormulario = ({ onSubmit }) => {
       <Navbar> </Navbar>
 
       <div className="max-w-md mx-auto mt-8 p-6 bg-gray-100 rounded-lg text-black">
-        {" "}
+
         {/* Se aplica el color de texto blanco a todo el formulario */}
         <h2 className="text-xl font-bold mb-4">Inicio de Sesion</h2>
 
@@ -71,13 +72,16 @@ const InicioFormulario = ({ onSubmit }) => {
 
         {/* Agregar un enlace de registro */}
         <div className="mb-4 text-center">
-          <p>
-            ¿No tienes una cuenta?{" "}
-            <a href="/register" className="text-blue-500 hover:underline">
-              Regístrate aquí
-            </a>
-          </p>
-        </div>
+  <p className="mb-4">
+    ¿No tienes una cuenta?{" "}
+    <a href="/register" className="text-blue-500 hover:underline">
+      Regístrate aquí
+    </a>
+  </p>
+
+  <ForgotPassword></ForgotPassword>
+</div>
+
       </div>
     </>
   );

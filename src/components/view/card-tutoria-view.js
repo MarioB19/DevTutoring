@@ -3,12 +3,18 @@ import Image from "next/image";
 import { confirmAlert } from "react-confirm-alert"; // Importa confirmAlert
 import "react-confirm-alert/src/react-confirm-alert.css"; // Importa los estilos por defecto
 import ToggleCardProfesor from "./toggle-card-profesor";
-import { axios } from "axios";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { format, parseISO } from 'date-fns';
 
-const TutoriaCardView = ({ profesorTutoria, onComprar , type}) => {
+const TutoriaCardView = ({ profesorTutoria, onComprar, type }) => {
+
+  function formatDateString(dateString) {
+    const date = parseISO(dateString); // Convierte la cadena ISO a un objeto Date
+    return format(date, 'dd/MM/yyyy'); // Formatea la fecha al formato deseado
+  }
+
   
-
+  
   const {
     tutoria: {
       titulo,
@@ -19,68 +25,57 @@ const TutoriaCardView = ({ profesorTutoria, onComprar , type}) => {
       reservada,
       id,
       fotografia,
+      fechaInicio,
+      horaInicio
     },
   } = profesorTutoria;
 
-  const {
-    profesor
-  } = profesorTutoria;
+  const dateFormated = formatDateString(fechaInicio);
+
+  const { profesor } = profesorTutoria;
 
 
-
-  const handleComprarTutoria = (id) => {
-    confirmAlert({
-      title: "Confirmar compra",
-      message: "¿Estás seguro de que quieres realizar la compra",
-      buttons: [
-        {
-          label: "Sí",
-          onClick: () => onComprar(id),
-        },
-        {
-          label: "No",
-        },
-      ],
-    });
-  };
-
-  const renderAction = () =>{
-    if(type === "alumno"){
+  const renderAction = () => {
+    if (type === "alumno" && reservada === false) {
       return (
-        <div className="flex justify-start mb-[12px] ml-3"> {/* Ajusta los valores de mb y ml según tus necesidades */}
-
-
-<PayPalScriptProvider options={{ clientId: "AeebljmVdQuktuS4FyaIXDjI_JU29ceXgDaIlwy49WCuBrsVqktOKbEhlnkcl4n3URjmiUxXz1TVq2yR",  currency: "MXN"  }}>
-  <PayPalButtons
-    createOrder={async (data, actions) => {
-      try {
-        const res = await fetch("/api/payment", {
-          method: "POST",
-          body: JSON.stringify({ costo: costo}) // Asegúrate de enviar el costo correctamente, puede que necesites ajustar el formato
-        });
-        const orderData = await res.json();
-        return orderData.id; // Devuelve el ID de la orden
-      } catch (error) {
-        console.error("Error al crear la orden:", error);
-        throw new Error("No se pudo crear la orden"); // Lanza un error en caso de problemas
-      }
-    }}
-    onCancel={data => alert("Compra cancelada")}
-    onApprove={(data, actions) =>{
-      console.log(data);
-      actions.order.capture();
-    }}
-    style={{ layout: "horizontal" , color: "blue" }}
-  />
-</PayPalScriptProvider>
-
-      </div>
-      )
+        <div className="flex justify-start mb-[12px] ml-3">
+          {" "}
+          {/* Ajusta los valores de mb y ml según tus necesidades */}
+          <PayPalScriptProvider
+            options={{
+              clientId:
+                "AeebljmVdQuktuS4FyaIXDjI_JU29ceXgDaIlwy49WCuBrsVqktOKbEhlnkcl4n3URjmiUxXz1TVq2yR",
+              currency: "MXN",
+            }}
+          >
+            <PayPalButtons
+              createOrder={async (data, actions) => {
+                try {
+                  const res = await fetch("/api/payment", {
+                    method: "POST",
+                    body: JSON.stringify({ costo: costo }), // Asegúrate de enviar el costo correctamente, puede que necesites ajustar el formato
+                  });
+                  const orderData = await res.json();
+                  return orderData.id; // Devuelve el ID de la orden
+                } catch (error) {
+                  console.error("Error al crear la orden:", error);
+                  throw new Error("No se pudo crear la orden"); // Lanza un error en caso de problemas
+                }
+              }}
+              onCancel={(data) => alert("Compra cancelada")}
+              onApprove={(data, actions) => {
+                console.log(data);
+                 actions.order.capture();
+                onComprar(id);
+              }}
+              style={{ layout: "horizontal", color: "blue" }}
+            />
+          </PayPalScriptProvider>
+        </div>
+      );
     }
-  }
 
-
-
+  };
 
   var area = "";
   switch (areaProgramacion) {
@@ -100,39 +95,45 @@ const TutoriaCardView = ({ profesorTutoria, onComprar , type}) => {
   }
 
   return (
-<div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden flex flex-col relative">
-  {fotografia && (
-    <div className="w-full h-48 relative">
-      <Image
-        src={fotografia}
-        alt={`Imagen de la tutoría ${titulo}`}
-        layout="fill"
-        objectFit="cover"
-        className="rounded-t-lg"
-      />
+    <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden flex flex-col relative">
+      {fotografia && (
+        <div className="w-full h-48 relative">
+          <Image
+            src={fotografia}
+            alt={`Imagen de la tutoría ${titulo}`}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-t-lg"
+          />
+        </div>
+      )}
+      <div className="border-t border-purple-200 p-4 flex flex-col justify-between flex-grow">
+        <div className="mb-4">
+          <h3 className="text-gray-900 font-bold text-xl mb-2">{titulo}</h3>
+          <p className="text-gray-700 text-base mb-4">{descripcion}</p>
+          <p className="text-black text-base mb-2">Área: {area}</p>
+          <p className="text-green-900 font-bold text-base mb-2">Fecha: {dateFormated} a las {horaInicio}</p>
+          <p className="text-red-600 text-xl mb-1">Costo: ${costo}</p>
+
+          {type === "mine" && (
+        <a
+          href={linkMeet}
+          className="text-blue-600 hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Unirse a la reunión
+        </a>
+      )}
+
+        </div>
+      </div>
+
+      <ToggleCardProfesor profesor={profesor}> </ToggleCardProfesor>
+
+      <div>{renderAction()}</div>
     </div>
-  )}
-  <div className="border-t border-purple-200 p-4 flex flex-col justify-between flex-grow">
-    <div className="mb-4">
-      <h3 className="text-gray-900 font-bold text-xl mb-2">{titulo}</h3>
-      <p className="text-gray-700 text-base mb-4">{descripcion}</p>
-      <p className="text-black text-base mb-2">Área: {area}</p>
-      <p className="text-red-600 text-xl mb-1">Costo: ${costo}</p>
-    </div>
-  </div>
 
-
-  <ToggleCardProfesor profesor={profesor}> </ToggleCardProfesor>
-  
-  <div>{renderAction()}</div>
-
-
-
-
-</div>
-
-
-  
   );
 };
 

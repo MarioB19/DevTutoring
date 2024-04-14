@@ -9,8 +9,8 @@ import {
   where,
   getDocs,
   doc,
-  getDoc
-  
+  getDoc,
+  updateDoc
 } from "firebase/firestore"; // Asegúrate de importar estas funciones
 
 
@@ -70,7 +70,7 @@ const Tutorias = ({ profesoresTutorias }) => {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
 
-  const { loading, tipo } = useAuth(); // Asegúrate de que 'tipo' no es necesario si no lo usas
+  const { loading, tipo, user } = useAuth(); // Asegúrate de que 'tipo' no es necesario si no lo usas
 
   // Filtra las profesoresTutorias basadas en la búsqueda
   const tutoriasFiltradas = profesoresTutorias.filter((profesorTutoria) =>
@@ -81,12 +81,28 @@ const Tutorias = ({ profesoresTutorias }) => {
     setBusqueda(event.target.value);
   };
 
-  // Función para manejar la compra de tutorías
   const handleComprarTutoria = async (id) => {
-
-    
-    
+    // Referencia al documento de la tutoría
+    const tutoriaRef = doc(db, "tutorias", id);
+  
+    try {
+      // Actualizar campos específicos del documento
+      await updateDoc(tutoriaRef, {
+        reservada: true,      // Suponiendo que quieres marcar la tutoría como reservada
+        id_alumno: user.uid,    // UID del usuario que compra la tutoría
+        fechaCompra: new Date() // Fecha actual como la fecha de compra
+      });
+  
+      // Aquí podrías añadir cualquier otra lógica de post-proceso, como alertas o redirecciones
+      alert("Compra realizada con éxito!");
+      router.reload();
+    } catch (error) {
+      // Manejo de errores
+      console.error("Error al comprar la tutoría: ", error);
+      alert("Error al realizar la compra.");
+    }
   };
+
 
   const renderView = () => {
     if (loading) {

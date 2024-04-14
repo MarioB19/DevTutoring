@@ -55,6 +55,14 @@ const RegistroFormulario = ({ onSubmit }) => {
             <input
               {...register("nombreCompleto", {
                 required: "Este campo es requerido",
+                minLength: {
+                  value: 10,
+                  message: 'El nombre debe tener al menos 10 caracteres.',
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'El nombre no puede exceder los 100 caracteres.',
+                },
               })}
               type="text"
               id="nombreCompleto"

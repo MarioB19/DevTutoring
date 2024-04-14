@@ -25,7 +25,7 @@ const Navbar = () => {
             </Link>
 
             <Link
-              href="/profesor/perfil"
+              href={`/profesor/perfil/${user.uid}`}
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
             >
               Mi perfil
@@ -50,14 +50,14 @@ const Navbar = () => {
           <>
 
           <Link
-              href="/alumno/mis-tutorias"
+               href={`/alumno/${user.uid}`}
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
             >
               Mis tutorias
             </Link>
 
             <Link
-              href="/alumno/perfil"
+               href={`/alumno/perfil/${user.uid}`}
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
             >
               Mi perfil

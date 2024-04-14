@@ -15,7 +15,7 @@ const InfoCard = ({ title, image, description }) => {
           />
         </div>
         <div className="flex-grow p-6 flex flex-col">
-          <h2 className="font-bold text-xl mb-2">{title}</h2>
+          <h2 className="text-black font-bold text-xl mb-2">{title}</h2>
           <p className="text-gray-700 text-base flex-grow">
             {description}
           </p>

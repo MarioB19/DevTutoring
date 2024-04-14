@@ -9,88 +9,86 @@ import {
   where,
   getDocs,
   doc,
-  deleteDoc,
-  getDoc,
+getDoc
 } from "firebase/firestore"; // Asegúrate de importar estas funciones
 import { isFuture, isPast, parseISO } from "date-fns"; // Importa las funciones isFuture y isPast de date-fns
-import TutoriaCardProfesor from "@/components/view/card-tutoria-profesor";
-
-
+import TutoriaCardView from "@/components/view/card-tutoria-view";
 
 export async function getServerSideProps(context) {
   const { uid } = context.params;
 
+  const now = new Date();
+
   const tutoriasRef = collection(db, "tutorias").withConverter(Tutoria.converter);
-  const qTutorias = query(tutoriasRef, where("id_profesor", "==", uid));
-  const querySnapshotTutorias = await getDocs(qTutorias);
-  const tutorias = querySnapshotTutorias.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
 
-  const tutoriasReservadas = tutorias.filter(tutoria => tutoria.reservada);
-  const alumnoIds = [...new Set(tutoriasReservadas.map(tutoria => tutoria.id_alumno))];
+  const q = query(
+    tutoriasRef, 
+    where("id_alumno", "==", uid),
+    
+  );
 
-  const alumnosRef = collection(db, "alumnos");
-  const alumnosPromises = alumnoIds.map(id => getDoc(doc(alumnosRef, id)));
-  const alumnosSnapshots = await Promise.all(alumnosPromises);
-  const alumnos = alumnosSnapshots.reduce((acc, snapshot) => {
-    if (snapshot.exists()) {
-      acc[snapshot.id] = snapshot.data();
-    }
-    return acc;
-  }, {});
+  const querySnapshot = await getDocs(q);
+  const tutorias = querySnapshot.docs.map((doc) => doc.data());
 
-  const tutoriasConAlumnos = tutorias.map(tutoria => {
-    const alumnoData = tutoria.reservada ? alumnos[tutoria.id_alumno] : null;
-    return {
-      tutoria: { ...tutoria, id_alumno: undefined }, // Remover id_alumno de tutoria
-      alumno: alumnoData
-    };
-  });
+  // Obtener los IDs de profesores únicos de las tutorías
+  const profesoresIds = [...new Set(tutorias.map(tutoria => tutoria.id_profesor))];
 
-  return {
-    props: {
-      tutoriasConAlumnos: JSON.parse(JSON.stringify(tutoriasConAlumnos)),
-    },
-  };
+// Buscar los profesores por los IDs obtenidos
+const profesoresRefs = collection(db, "profesores");
+
+const profesoresPromises = profesoresIds.map(id_profesor => 
+  getDoc(doc(profesoresRefs, id_profesor))
+);
+
+// Esperar a que todas las promesas de obtener los profesores se resuelvan
+const profesoresSnapshots = await Promise.all(profesoresPromises);
+
+const profesores = profesoresSnapshots.map(snapshot => ({
+  id: snapshot.id,
+  ...snapshot.data()
+}));
+
+// Combina las tutorías con los profesores correspondientes
+const profesoresTutorias = tutorias.map(tutoria => {
+  const profesor = profesores.find(prof => prof.id === tutoria.id_profesor);
+  return { tutoria, profesor }; // aquí estamos creando un objeto con dos propiedades: tutoria y profesor
+});
+
+return {
+  props: {
+    profesoresTutorias: JSON.parse(JSON.stringify(profesoresTutorias)),
+  },
+};
+
 }
 
 
 
-const GestorTutorias = ({ tutoriasConAlumnos }) => {
+
+const GestorTutorias = ({ profesoresTutorias }) => {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
-  const [vistaActiva, setVistaActiva] = useState("futuras");
+  const [vistaActiva, setVistaActiva] = useState("futuras"); // Estado para manejar qué grupo de tutorías se muestra
 
   // Filtra las tutorías basadas en la búsqueda y determina cuáles son futuras o pasadas
-  const tutoriasFiltradas = tutoriasConAlumnos.filter(({ tutoria }) =>
+  const tutoriasFiltradas = profesoresTutorias.filter(({ tutoria }) =>
     tutoria.titulo.toLowerCase().includes(busqueda.toLowerCase())
   );
 
   const tutoriasFuturas = tutoriasFiltradas.filter(({ tutoria }) => {
     const dateTime = `${tutoria.fechaInicio}T${tutoria.horaInicio}`;
-    return isFuture(parseISO(dateTime));
+    const date = parseISO(dateTime);
+    return isFuture(date);
   });
 
   const tutoriasPasadas = tutoriasFiltradas.filter(({ tutoria }) => {
     const dateTime = `${tutoria.fechaInicio}T${tutoria.horaInicio}`;
-    return isPast(parseISO(dateTime));
+    const date = parseISO(dateTime);
+    return isPast(date);
   });
 
   const handleSearch = (event) => {
     setBusqueda(event.target.value);
-  };
-
-  const handleEliminarTutoria = async (id) => {
-    const tutoriaRef = doc(db, "tutorias", id);
-    try {
-      await deleteDoc(tutoriaRef);
-      router.reload();
-      console.log("Tutoría eliminada con éxito");
-    } catch (error) {
-      console.error("Error al eliminar la tutoría: ", error);
-    }
   };
 
   return (
@@ -98,12 +96,7 @@ const GestorTutorias = ({ tutoriasConAlumnos }) => {
       <Navbar />
       <div className="container mx-auto p-4">
         <div className="flex justify-end items-center mb-6">
-          <button
-            className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => router.push("/profesor/crear-tutoria")}
-          >
-            Crear Tutoría
-          </button>
+          {/* Espacio para otros controles o información si es necesario */}
         </div>
         <div className="text-center mt-4 mb-8">
           <input
@@ -114,6 +107,7 @@ const GestorTutorias = ({ tutoriasConAlumnos }) => {
             onChange={handleSearch}
           />
         </div>
+
         <div className="flex justify-center space-x-4 mb-6">
           <button
             className={`px-4 py-2 rounded ${
@@ -136,15 +130,17 @@ const GestorTutorias = ({ tutoriasConAlumnos }) => {
             Tutorías Pasadas
           </button>
         </div>
+
         <div className="grid grid-cols-3 gap-4 mt-4">
           {(vistaActiva === "futuras" ? tutoriasFuturas : tutoriasPasadas).map(
-            ({ tutoria, alumno }) => (
-              <TutoriaCardProfesor
-                key={tutoria.id}
-                tutoria={tutoria}
-                alumno={alumno} 
-                onEliminar={() => handleEliminarTutoria(tutoria.id)}
+            (profesorTutoria) => (
+              <TutoriaCardView
+              key={profesorTutoria.tutoria.id}
+              profesorTutoria={profesorTutoria}
+     
+              type={"mine"}
               />
+
             )
           )}
         </div>
