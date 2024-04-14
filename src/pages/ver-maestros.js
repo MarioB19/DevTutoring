@@ -6,9 +6,8 @@ import { collection, getDocs } from "firebase/firestore";
 import { Profesor } from "@/models/profesor";
 
 export const getServerSideProps = async () => {
-  const profesoresRef = collection(db, "profesores").withConverter(
-    Profesor.converter
-  );
+  const profesoresRef = collection(db, "profesores")
+  
   const querySnapshot = await getDocs(profesoresRef);
   const profesores = querySnapshot.docs.map((doc) => doc.data());
 
@@ -30,7 +29,7 @@ const Maestros = ({ profesores }) => {
     <>
       <Navbar />
       <div className="container mx-auto p-4">
-        {/* Añadir un buscador */}
+      
         <div className="mb-6 flex justify-center">
           <input
             type="text"
