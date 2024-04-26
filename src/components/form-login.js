@@ -69,9 +69,9 @@ const InicioFormulario = ({ onSubmit }) => {
         <div className="mb-4 text-center">
           <p className="mb-4">
             ¿No tienes una cuenta?{" "}
-            <a href="/register" className="text-blue-500 hover:underline">
+            <Link href="/register" className="text-blue-500 hover:underline">
               Regístrate aquí
-            </a>
+            </Link>
           </p>
 
           <ForgotPassword></ForgotPassword>
