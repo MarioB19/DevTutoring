@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import ForgotPassword from "@/components/forgot-password";
 import Footer from "./footer";
 
+import Link from "next/link";
+
 const InicioFormulario = ({ onSubmit }) => {
   const {
     register,
