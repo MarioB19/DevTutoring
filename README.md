@@ -1,1 +1,1 @@
-Project made in next js
+E-commerce made in next js, with Firebase and Tailwind css
