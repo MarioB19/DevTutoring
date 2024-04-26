@@ -4,6 +4,7 @@ import ProfesorCard from "@/components/view/card-profesor";
 import { db } from "@/config/firebase-config-cliente";
 import { collection, getDocs } from "firebase/firestore";
 import { Profesor } from "@/models/profesor";
+import Footer from "@/components/footer";
 
 export const getServerSideProps = async () => {
   const profesoresRef = collection(db, "profesores")
@@ -51,6 +52,8 @@ const Maestros = ({ profesores }) => {
           ))}
         </div>
       </div>
+
+      <Footer></Footer>
     </>
   );
 };

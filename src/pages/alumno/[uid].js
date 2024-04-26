@@ -14,6 +14,7 @@ getDoc
 import { isFuture, isPast, parseISO } from "date-fns";
 import TutoriaCardView from "@/components/view/card-tutoria-view";
 import ProtectedRoute from "@/controllers/controller-protected-route";
+import Footer from "@/components/footer";
 
 export async function getServerSideProps(context) {
   const { uid } = context.params;
@@ -145,8 +146,11 @@ const GestorTutorias = ({ profesoresTutorias }) => {
           )}
         </div>
       </div>
+      <Footer></Footer>
 
       </ProtectedRoute>
+
+      
     </>
   );
 };

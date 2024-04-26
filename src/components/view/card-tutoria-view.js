@@ -35,11 +35,13 @@ const TutoriaCardView = ({ profesorTutoria, onComprar, type }) => {
   const { profesor } = profesorTutoria;
 
 
+
   const renderAction = () => {
     if (type === "alumno" && reservada === false) {
       return (
         <div className="flex justify-start mb-[12px] ml-3">
           {" "}
+
     
           <PayPalScriptProvider
             options={{

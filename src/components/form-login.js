@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../components/navbar";
 import { useForm } from "react-hook-form";
 import ForgotPassword from "@/components/forgot-password";
+import Footer from "./footer";
 
 const InicioFormulario = ({ onSubmit }) => {
   const {
@@ -76,6 +77,8 @@ const InicioFormulario = ({ onSubmit }) => {
           <ForgotPassword></ForgotPassword>
         </div>
       </div>
+
+      <Footer></Footer>
     </>
   );
 };

@@ -15,6 +15,7 @@ import {
 import { isFuture, isPast, parseISO } from "date-fns"; 
 import TutoriaCardProfesor from "@/components/view/card-tutoria-profesor";
 import ProtectedRoute from "@/controllers/controller-protected-route";
+import Footer from "@/components/footer";
 
 
 
@@ -152,6 +153,8 @@ const GestorTutorias = ({ tutoriasConAlumnos }) => {
         </div>
       </div>
       </ProtectedRoute>
+
+      <Footer></Footer>
     </>
   );
 };

@@ -8,6 +8,7 @@ import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import ProtectedRoute from "@/controllers/controller-protected-route";
+import Footer from "@/components/footer";
 export default function Perfil({ user }) {
   const {
     register,
@@ -190,7 +191,10 @@ export default function Perfil({ user }) {
           </button>
         </form>
       </div>
+      <Footer></Footer>
       </ProtectedRoute>
+
+     
     </>
   );
 }

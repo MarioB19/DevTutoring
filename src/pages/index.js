@@ -13,6 +13,8 @@ import {
   updateDoc
 } from "firebase/firestore"; 
 
+import Footer from "@/components/footer";
+
 
 import LoadingIndicator from "@/components/view/loading-indicator";
 import TutoriaCardView from "@/components/view/card-tutoria-view";
@@ -140,6 +142,8 @@ const Tutorias = ({ profesoresTutorias }) => {
       <Navbar></Navbar>
       
       <div>{renderView()}</div>
+      
+<Footer></Footer>
       
     </>
   );

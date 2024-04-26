@@ -5,6 +5,7 @@ import CardsGrid from '@/components/view/cards-grid';
 import Navbar from '@/components/navbar';
 
 import Head from 'next/head';
+import Footer from '@/components/footer';
 
 
 const TutoringSection = () => {
@@ -57,6 +58,8 @@ const TutoringSection = () => {
   
 
 </CardsGrid>
+
+<Footer></Footer>
 
       </>
       

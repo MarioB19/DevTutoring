@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 
 import ProtectedRoute from "@/controllers/controller-protected-route";
+import Footer from "@/components/footer";
 export default function Perfil({ user }) {
   const {
     register,
@@ -172,7 +173,11 @@ export default function Perfil({ user }) {
 
         </form>
       </div>
+      <Footer></Footer>
+
       </ProtectedRoute>
+
+     
     </>
   );
 }
@@ -197,6 +202,6 @@ export async function getServerSideProps(context) {
   };
 
   return {
-    props: { user }, // Pasar el usuario como prop
+    props: { user }, 
   };
 }

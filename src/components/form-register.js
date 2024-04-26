@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Navbar from "../components/navbar";
+import Footer from "./footer";
 
 const RegistroFormulario = ({ onSubmit }) => {
   const {
@@ -186,6 +187,8 @@ const RegistroFormulario = ({ onSubmit }) => {
           </button>
         </form>
       </div>
+
+      <Footer></Footer>
     </>
   );
 };

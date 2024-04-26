@@ -2,6 +2,7 @@ import Head from "next/head";
 
 import MemberCard from "@/components/view/member-card";
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
 const AboutPage = () => {
   return (
@@ -119,6 +120,8 @@ const AboutPage = () => {
           </section>
         </div>
       </main>
+
+      <Footer></Footer>
     </>
   );
 };
