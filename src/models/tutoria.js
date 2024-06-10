@@ -69,5 +69,23 @@ export class Tutoria {
         });
       }
     }
+
+
+  }
+
+
+  
+  export async function createOrder(costo) {
+    try {
+      const res = await fetch("/api/payment", {
+        method: "POST",
+        body: JSON.stringify({ costo: costo }),
+      });
+      const orderData = await res.json();
+      return orderData.id;
+    } catch (error) {
+      console.error("Error al crear la orden:", error);
+      throw new Error("No se pudo crear la orden"); 
+    }
   }
   
