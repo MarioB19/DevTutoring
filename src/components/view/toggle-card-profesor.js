@@ -20,19 +20,15 @@ const ToggleCardProfesor = ({ profesor }) => {
   };
 
   return (
-    <div>
-          <div className="absolute bottom-0 right-0 mr-[1rem]"> 
-          <div className="w-12 h-12 mb-1 relative" onClick={handleImageClick} style={{ cursor: 'pointer' }}>
-      <Image
-        src= {profesor.fotoPerfil} 
-        alt="Foto del creador"
-        layout="fill"
-        className="rounded-full object-cover"
-      />
-    </div>
-
-
-  </div>
+    <div className="relative flex flex-col items-center">
+      <div className="w-24 h-24 mb-4 relative" onClick={handleImageClick} style={{ cursor: 'pointer' }}>
+        <Image
+          src={profesor.fotoPerfil}
+          alt="Foto del creador"
+          layout="fill"
+          className="rounded-full object-cover"
+        />
+      </div>
       {mostrarTarjeta && (
         <div
           id="backdrop"

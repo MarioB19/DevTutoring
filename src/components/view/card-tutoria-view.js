@@ -1,12 +1,14 @@
 // components/TutoriaCardView.js
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import ToggleCardProfesor from "./toggle-card-profesor";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { format, parseISO } from 'date-fns';
-import { handleCreateOrder } from "@/controllers/controller-order";
-const TutoriaCardView = ({ profesorTutoria, onComprar, type }) => {
+
+const TutoriaCardView = ({ profesorTutoria, type }) => {
+  const router = useRouter();
+
   function formatDateString(dateString) {
     const date = parseISO(dateString); 
     return format(date, 'dd/MM/yyyy'); 
@@ -30,27 +32,20 @@ const TutoriaCardView = ({ profesorTutoria, onComprar, type }) => {
   const dateFormated = formatDateString(fechaInicio);
   const { profesor } = profesorTutoria;
 
+  const handleComprarClick = () => {
+    router.push({
+      pathname: '/purchase-confirmation',
+      query: { costo, id, titulo, descripcion, areaProgramacion, fotografia, fechaInicio, horaInicio, profesor: JSON.stringify(profesor) },
+    });
+  };
+
   const renderAction = () => {
     if (type === "alumno" && reservada === false) {
       return (
         <div className="flex justify-start mb-[12px] ml-3">
-          <PayPalScriptProvider
-            options={{
-              clientId: "AeebljmVdQuktuS4FyaIXDjI_JU29ceXgDaIlwy49WCuBrsVqktOKbEhlnkcl4n3URjmiUxXz1TVq2yR",
-              currency: "MXN",
-            }}
-          >
-            <PayPalButtons
-              createOrder={() => handleCreateOrder(costo)}
-              
-              onCancel={() => alert("Compra cancelada")}
-              onApprove={(data, actions) => {
-                actions.order.capture();
-                onComprar(id);
-              }}
-              style={{ layout: "horizontal", color: "blue" }}
-            />
-          </PayPalScriptProvider>
+          <button onClick={handleComprarClick} className="bg-green-500 text-white px-4 py-2 rounded">
+            Comprar
+          </button>
         </div>
       );
     }
