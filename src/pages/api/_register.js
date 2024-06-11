@@ -41,6 +41,8 @@ export default async function handler(req, res) {
         fechaNacimiento: fechaNacimientoTimestamp,
         correoElectronico,
         descripcionPerfil,
+        aceptado: false,
+        
       });
 
       const profesor = new FirestoreInstance("profesores", Profesor.converter);

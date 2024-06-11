@@ -16,6 +16,14 @@ const ControllerLogin = () => {
         } else if (tipo === "alumno") {
           router.push('/');
         }
+        else if(tipo === "admin"){
+          router.push('/admin')
+        }
+        else if(tipo === "profesorInvalido"){
+          alert("Todavia un administrador no te ha aceptado")
+          router.push('/logout')
+        }
+  
       }
     }
   }, [user, tipo, loading, router]);

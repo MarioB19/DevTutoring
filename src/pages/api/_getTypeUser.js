@@ -14,7 +14,13 @@ export default async function handler(req, res) {
     const profesorSnap = await profesorRef.get();
 
     if (profesorSnap.exists) {
-      return res.status(200).json({ message: 'Usuario verificado exitosamente', tipo: "profesor" });
+      const profesorData = profesorSnap.data();
+
+      if (profesorData.aceptado) {
+        return res.status(200).json({ message: 'Usuario verificado exitosamente', tipo: "profesor" });
+      } else {
+        return res.status(200).json({ message: 'Usuario no aceptado', tipo: "profesorInvalido" });
+      }
     }
 
 
@@ -24,6 +30,16 @@ export default async function handler(req, res) {
     if (alumnoSnap.exists) {
       return res.status(200).json({ message: 'Usuario verificado exitosamente', tipo: "alumno" });
     }
+
+
+
+    const administradorRef = db.collection('administradores').doc(uid);
+    const administradorSnap = await administradorRef.get();
+
+    if (administradorSnap.exists) {
+      return res.status(200).json({ message: 'Usuario verificado exitosamente', tipo: "admin" });
+    }
+
 
 
     res.status(200).json({ message: 'Usuario no encontrado' , tipo: "error"});
