@@ -10,8 +10,8 @@ const AdminPanel = ({ initialAlumnos, initialProfesores, initialTutorias }) => {
   const [profesores, setProfesores] = useState(initialProfesores);
   const [tutorias, setTutorias] = useState(initialTutorias);
 
-  const acceptedProfesores = profesores.filter(profesor => profesor.aceptado);
-  const pendingProfesores = profesores.filter(profesor => !profesor.aceptado);
+  const acceptedProfesores = profesores.filter(profesor => profesor.aceptado === true);
+  const pendingProfesores = profesores.filter(profesor => profesor.aceptado === false);
 
   const handleDeleteAlumno = async (id) => {
     await deleteDoc(doc(db, "alumnos", id));
