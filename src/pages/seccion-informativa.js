@@ -87,7 +87,7 @@ const AboutPage = () => {
                 socialMedia={[
                   {
                     icon: "fa-instagram",
-                    url: "https://www.instagram.com/brandon_mur_/",
+                    url: "https://www.instagram.com/brandon.muro.mx",
                   },
                   { icon: "fa-github", url: "https://github.com/MarioB19" },
                 ]}
