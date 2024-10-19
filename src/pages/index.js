@@ -12,10 +12,7 @@ import {
   getDoc,
   updateDoc
 } from "firebase/firestore"; 
-
 import Footer from "@/components/footer";
-
-
 import LoadingIndicator from "@/components/view/loading-indicator";
 import TutoriaCardView from "@/components/view/card-tutoria-view";
 import useAuth from "@/controllers/hooks/auth";
@@ -71,9 +68,7 @@ return {
 const Tutorias = ({ profesoresTutorias }) => {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
-
   const { loading, tipo, user } = useAuth(); 
-
 
   const tutoriasFiltradas = profesoresTutorias.filter((profesorTutoria) =>
     profesorTutoria.tutoria.titulo.toLowerCase().includes(busqueda.toLowerCase())
@@ -84,27 +79,22 @@ const Tutorias = ({ profesoresTutorias }) => {
   };
 
   const handleComprarTutoria = async (id) => {
-  
     const tutoriaRef = doc(db, "tutorias", id);
   
     try {
-
       await updateDoc(tutoriaRef, {
         reservada: true,    
         id_alumno: user.uid,   
         fechaCompra: new Date() 
       });
   
-    
       alert("Compra realizada con éxito!");
       router.reload();
     } catch (error) {
-
       console.error("Error al comprar la tutoría: ", error);
       alert("Error al realizar la compra.");
     }
   };
-
 
   const renderView = () => {
     if (loading) {
@@ -112,24 +102,23 @@ const Tutorias = ({ profesoresTutorias }) => {
     }
 
     return (
-      <div className="container mx-auto p-4">
-        <div className="text-center mt-4 mb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
           <input
             type="text"
             placeholder="Buscar tutorías..."
-            className="text-black mb-4 p-2 border rounded shadow w-1/2 bg-purple-100 border-purple-500 placeholder-purple-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+            className="w-full md:w-2/3 lg:w-1/2 text-black mb-4 p-3 border rounded-lg shadow bg-purple-100 border-purple-500 placeholder-purple-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
             value={busqueda}
             onChange={handleSearch}
           />
         </div>
-        <div className="grid grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tutoriasFiltradas.map((profesorTutoria) => (
             <TutoriaCardView
               key={profesorTutoria.tutoria.id}
               profesorTutoria={profesorTutoria}
               onComprar={() => handleComprarTutoria(profesorTutoria.tutoria.id)}
               type={tipo}
-            
             />
           ))}
         </div>
@@ -138,16 +127,14 @@ const Tutorias = ({ profesoresTutorias }) => {
   };
 
   return (
-    <>
-      <Navbar></Navbar>
-      
-      <div>{renderView()}</div>
-      
-<Footer></Footer>
-      
-    </>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow">
+        {renderView()}
+      </main>
+      <Footer />
+    </div>
   );
 };
-
 
 export default Tutorias;

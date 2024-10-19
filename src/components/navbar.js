@@ -1,146 +1,111 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "@/controllers/hooks/auth";
+import Logo from "./logo";
+
+// Componente NavLink con estilos responsivos
+const NavLink = ({ href, children }) => (
+  <Link
+    href={href}
+    className="text-purple-200 hover:text-white hover:bg-purple-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+  >
+    {children}
+  </Link>
+);
 
 const Navbar = () => {
   const { user, tipo, loading } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Función para renderizar los enlaces dependiendo del tipo de usuario
   const renderLinks = () => {
     if (loading) {
-      return <div>Cargando...</div>;
+      return <div className="text-purple-200">Cargando...</div>;
     }
 
     if (user) {
-      if (tipo === "profesor") {
-        return (
-          <>
+      const links = [
+        { href: `/${tipo}/${user.uid}`, label: "Mis tutorías" },
+        { href: `/${tipo}/perfil/${user.uid}`, label: "Mi perfil" },
+        { href: "/logout", label: "Cerrar Sesión" },
+      ];
 
-            <Link
-            href={`/profesor/${user.uid}`}
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Mis tutorias
-            </Link>
-
-            <Link
-              href={`/profesor/perfil/${user.uid}`}
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Mi perfil
-            </Link>
-
-            <Link
-              href="/logout"
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Cerrar Sesion
-            </Link>
-
-            <div className="flex justify-end">
-              <h1 className="text-blue-400 hover:text-blue px-3 py-2 rounded-md text-sm font-medium">
-                Profesor
-              </h1>
-            </div>
-          </>
-        );
-      } else if (tipo === "alumno") {
-        return (
-          <>
-
-          <Link
-               href={`/alumno/${user.uid}`}
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Mis tutorias
-            </Link>
-
-            <Link
-               href={`/alumno/perfil/${user.uid}`}
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Mi perfil
-            </Link>
-
-            <Link
-              href="/logout"
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Cerrar Sesion
-            </Link>
-
-            <div className="flex justify-end">
-              <h1 className="text-blue-400 hover:text-blue px-3 py-2 rounded-md text-sm font-medium">
-                Alumno
-              </h1>
-            </div>
-          </>
-        );
-      }
+      return (
+        <>
+          {links.map((link) => (
+            <NavLink key={link.href} href={link.href}>
+              {link.label}
+            </NavLink>
+          ))}
+          <div className="flex items-center ml-4">
+            <span className="text-purple-300 font-medium capitalize">{tipo}</span>
+          </div>
+        </>
+      );
     }
 
-  
-    return (
-      <>
-        <Link
-          href="/login"
-          className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-        >
-          Iniciar Sesión
-        </Link>
-      </>
-    );
+    return <NavLink href="/login">Iniciar Sesión</NavLink>;
   };
 
   return (
-    <nav className="bg-gray-800">
-      <div className="container mx-auto flex items-center justify-between p-4">
-     
-        <div className="flex items-center">
-         
-          <Link
-            href="/"
-            className="flex items-center cursor-pointer"
-          >
-            <Image
-              src="/logo.png" 
-              alt="Logo"
-              width={100}
-              height={100}
-              layout="intrinsic" 
-            />
-          </Link>
+    <nav className="bg-purple-900 shadow-lg">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Logo />
+          </div>
 
-          <Link
-            href="/"
-            className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Ver tutorías
-          </Link>
+          {/* Desktop links */}
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              <NavLink href="/">Ver tutorías</NavLink>
+              <NavLink href="/ver-maestros">Ver maestros</NavLink>
+              <NavLink href="/seccion-informativa">Sección Informativa</NavLink>
+              <NavLink href="/ver-areas-de-conocimiento">Ver áreas de conocimiento</NavLink>
+              {renderLinks()}
+            </div>
+          </div>
 
-          <Link
-            href="/ver-maestros"
-            className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Ver maestros
-          </Link>
-          <Link
-            href="/seccion-informativa"
-            className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Sección Informativa
-          </Link>
-          <Link
-            href="/ver-areas-de-conocimiento"
-            className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Ver áreas de conocimientos
-          </Link>
-
-          <div className="flex">{renderLinks()}</div>
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-purple-200 hover:text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              aria-expanded={isOpen}
+            >
+              <span className="sr-only">Abrir menú principal</span>
+              {isOpen ? (
+                <X className="block h-6 w-6" aria-hidden="true" />
+              ) : (
+                <Menu className="block h-6 w-6" aria-hidden="true" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-purple-800 bg-opacity-95"
+          >
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col items-center">
+              <NavLink href="/">Ver tutorías</NavLink>
+              <NavLink href="/ver-maestros">Ver maestros</NavLink>
+              <NavLink href="/seccion-informativa">Sección Informativa</NavLink>
+              <NavLink href="/ver-areas-de-conocimiento">Ver áreas de conocimiento</NavLink>
+              {renderLinks()}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
