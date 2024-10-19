@@ -1,33 +1,30 @@
-import React from "react";
-import Link from "next/link";
+import * as React from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="bg-gray-800 text-white text-center py-4">
-      <div className="container mx-auto">
-        <div className="flex justify-center space-x-4">
-          <Link
-            href="/avisos-de-privacidad.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Avisos de Privacidad
-          </Link>
-
-          <Link
-            href="/terminos-y-condiciones.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Términos y Condiciones
-          </Link>
+    <footer className="bg-purple-900 text-purple-100">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-y-0 md:space-x-4">
+          <Button asChild variant="ghost" className="text-purple-100 hover:text-white hover:bg-purple-800">
+            <Link href="/avisos-de-privacidad.pdf" target="_blank" rel="noopener noreferrer">
+              Avisos de Privacidad
+            </Link>
+          </Button>
+          <Separator className="hidden md:block bg-purple-700 h-6" orientation="vertical" />
+          <Button asChild variant="ghost" className="text-purple-100 hover:text-white hover:bg-purple-800">
+            <Link href="/terminos-y-condiciones.pdf" target="_blank" rel="noopener noreferrer">
+              Términos y Condiciones
+            </Link>
+          </Button>
         </div>
-        <p className="mt-4">© {new Date().getFullYear()} DevTutoring. Todos los derechos reservados 2024.</p>
+        <Separator className="my-6 bg-purple-700" />
+        <p className="text-center text-sm text-purple-300">
+          © {new Date().getFullYear()} DevTutoring. Todos los derechos reservados.
+        </p>
       </div>
     </footer>
-  );
-};
-
-export default Footer;
+  )
+}
