@@ -1,6 +1,14 @@
+"use client"
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 const FormularioTutorias = ({ onSubmit }) => {
   const {
@@ -9,271 +17,238 @@ const FormularioTutorias = ({ onSubmit }) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
-  const watchFoto = watch("foto"); 
-  const [fotoURL, setFotoURL] = useState("");
+  const watchFoto = watch("foto")
+  const [fotoURL, setFotoURL] = useState("")
 
   useEffect(() => {
- 
     if (watchFoto && watchFoto.length > 0) {
-      const file = watchFoto[0];
-      setFotoURL(URL.createObjectURL(file));
+      const file = watchFoto[0]
+      setFotoURL(URL.createObjectURL(file))
 
- 
       return () => {
-        URL.revokeObjectURL(fotoURL);
-      };
+        URL.revokeObjectURL(fotoURL)
+      }
     }
-  }, [watchFoto]);
+  }, [watchFoto])
 
   const [minDateTime, setMinDateTime] = useState({
     date: "",
     time: "",
-  });
+  })
 
   useEffect(() => {
-    const now = new Date();
-    const date = now.toISOString().split("T")[0];
-    let hours = now.getHours().toString().padStart(2, "0");
-    let minutes = now.getMinutes().toString().padStart(2, "0");
-    const time = `${hours}:${minutes}`;
-    setMinDateTime({ date, time });
-  }, []);
+    const now = new Date()
+    const date = now.toISOString().split("T")[0]
+    let hours = now.getHours().toString().padStart(2, "0")
+    let minutes = now.getMinutes().toString().padStart(2, "0")
+    const time = `${hours}:${minutes}`
+    setMinDateTime({ date, time })
+  }, [])
 
- 
-  const selectedDate = watch("fechaInicio");
+  const selectedDate = watch("fechaInicio")
   useEffect(() => {
     if (selectedDate === minDateTime.date) {
- 
-      const now = new Date();
-      let hours = now.getHours().toString().padStart(2, "0");
-      let minutes = now.getMinutes().toString().padStart(2, "0");
+      const now = new Date()
+      let hours = now.getHours().toString().padStart(2, "0")
+      let minutes = now.getMinutes().toString().padStart(2, "0")
       setMinDateTime((prevState) => ({
         ...prevState,
         time: `${hours}:${minutes}`,
-      }));
+      }))
     } else {
-
       setMinDateTime((prevState) => ({
         ...prevState,
         time: "",
-      }));
+      }))
     }
-  }, [selectedDate, minDateTime.date]);
-
+  }, [selectedDate, minDateTime.date])
 
   const onFormSubmit = async (data) => {
-    await onSubmit(data);  
-    reset();  
-  };
+    await onSubmit(data)
+    reset()
+  }
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit(onFormSubmit)}
-        className="max-w-lg mx-auto my-10"
-      >
-        <div className="mb-6">
-          <label
-            htmlFor="title"
-            className="block mb-2 text-sm font-medium text-black"
+    <Card className="w-full max-w-2xl mx-auto my-8">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold text-center">Crear Nueva Tutoría</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            Título de la Tutoría
-          </label>
-          <input
-            type="text"
-            id="title"
-            {...register("title", { required: true })}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Introduce el título"
-          />
-          {errors.title && (
-            <p className="text-red-500 text-xs mt-1">
-              El título es obligatorio.
-            </p>
-          )}
-        </div>
-
-
-
-        <div className="mb-6">
-          <label
-            htmlFor="description"
-            className="block mb-2 text-sm font-medium text-black"
-          >
-            Descripción
-          </label>
-          <textarea
-            id="description"
-            {...register("description", { required: true })}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Detalles de la tutoría"
-            rows="4"
-          />
-          {errors.description && (
-            <p className="text-red-500 text-xs mt-1">
-              La descripción es obligatoria.
-            </p>
-          )}
-        </div>
-
-        <div className="mb-6">
-          <label
-            htmlFor="foto"
-            className="block mb-2 text-sm font-medium text-black"
-          >
-            Fotografía
-          </label>
-          <input
-            type="file"
-            id="foto"
-            {...register("foto", { required: "Se requiere una imagen." })}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-          />
-          {errors.foto && (
-            <p className="text-red-500 text-xs mt-1">{errors.foto.message}</p>
-          )}
-
-          {watchFoto && watchFoto.length > 0 && (
-            <img
-              src={fotoURL}
-              alt="Vista previa"
-              className="mt-2 max-w-xs h-auto rounded"
+            <Label htmlFor="title">Título de la Tutoría</Label>
+            <Input
+              id="title"
+              {...register("title", { required: "El título es obligatorio." })}
+              placeholder="Introduce el título"
             />
-          )}
-        </div>
+            {errors.title && (
+              <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>
+            )}
+          </motion.div>
 
-        
-
-        {/* Selector de opciones */}
-        <div className="mb-6">
-          <label
-            htmlFor="area"
-            className="block mb-2 text-sm font-medium text-black"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
           >
-            Área de programación
-          </label>
-          <select
-            id="area"
-            {...register("area", { required: "Este campo es obligatorio." })}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            <Label htmlFor="description">Descripción</Label>
+            <Textarea
+              id="description"
+              {...register("description", { required: "La descripción es obligatoria." })}
+              placeholder="Detalles de la tutoría"
+              rows={4}
+            />
+            {errors.description && (
+              <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
+            )}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
           >
-            <option value="">Selecciona un área</option>
-            <option value="01">Programación Básica y Algorítmica</option>
-            <option value="02">Desarrollo Web Frontend</option>
-            <option value="03">Desarrollo Web Backend</option>
-            <option value="04">Desarrollo Móvil</option>
-          </select>
-          {errors.area && (
-            <p className="text-red-500 text-xs mt-1">{errors.area.message}</p>
-          )}
-        </div>
+            <Label htmlFor="foto">Fotografía</Label>
+            <Input
+              type="file"
+              id="foto"
+              {...register("foto", { required: "Se requiere una imagen." })}
+              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+            />
+            {errors.foto && (
+              <p className="text-red-500 text-xs mt-1">{errors.foto.message}</p>
+            )}
+            {watchFoto && watchFoto.length > 0 && (
+              <img
+                src={fotoURL}
+                alt="Vista previa"
+                className="mt-2 max-w-xs h-auto rounded"
+              />
+            )}
+          </motion.div>
 
-        <div className="mb-6">
-          <label htmlFor="cost" className="block mb-2 text-sm font-medium text-black">
-            Costo de la Tutoría (mínimo $100)
-          </label>
-          <input
-            type="number"
-            id="cost"
-            {...register("costo", { required: true, min: 100 })}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Introduce el costo"
-          />
-          {errors.cost && (
-            <p className="text-red-500 text-xs mt-1">
-              El costo es obligatorio y debe ser mínimo $100.
-            </p>
-          )}
-        </div>
-
-
-        <div className="mb-6">
-          <label
-            htmlFor="linkMeet"
-            className="block mb-2 text-sm font-medium text-black"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
           >
-            Link de Meet
-          </label>
-          <input
-            type="text"
-            id="linkMeet"
-            {...register("linkMeet", {
-              required: "Se requiere un link de Meet.",
-              pattern: {
-                value: /^https:\/\/meet\.google\.com\/[a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3}$/
-                ,
-                message: "Ingresa un link de Google Meet válido.",
-              },
-            })}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="https://meet.google.com/xxx-xxxx-xxx"
-          />
-          {errors.linkMeet && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.linkMeet.message}
-            </p>
-          )}
-        </div>
-        <div className="mb-6">
-          <label
-            htmlFor="fechaInicio"
-            className="block mb-2 text-sm font-medium text-black"
+            <Label htmlFor="area">Área de programación</Label>
+            <Select {...register("area", { required: "Este campo es obligatorio." })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona un área" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="01">Programación Básica y Algorítmica</SelectItem>
+                <SelectItem value="02">Desarrollo Web Frontend</SelectItem>
+                <SelectItem value="03">Desarrollo Web Backend</SelectItem>
+                <SelectItem value="04">Desarrollo Móvil</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.area && (
+              <p className="text-red-500 text-xs mt-1">{errors.area.message}</p>
+            )}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.4 }}
           >
-            Fecha de inicio
-          </label>
-          <input
-            type="date"
-            id="fechaInicio"
-            {...register("fechaInicio", {
-              required: "Se requiere una fecha de inicio.",
-            })}
-            min={minDateTime.date} // Fecha actual como mínimo
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          />
-          {errors.fechaInicio && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.fechaInicio.message}
-            </p>
-          )}
-        </div>
+            <Label htmlFor="costo">Costo de la Tutoría (mínimo $100)</Label>
+            <Input
+              type="number"
+              id="costo"
+              {...register("costo", { required: true, min: 100 })}
+              placeholder="Introduce el costo"
+            />
+            {errors.costo && (
+              <p className="text-red-500 text-xs mt-1">
+                El costo es obligatorio y debe ser mínimo $100.
+              </p>
+            )}
+          </motion.div>
 
-        {/* Selector de hora de inicio */}
-        <div className="mb-6">
-          <label
-            htmlFor="horaInicio"
-            className="block mb-2 text-sm font-medium text-black"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.5 }}
           >
-            Hora de inicio
-          </label>
-          <input
-            type="time"
-            id="horaInicio"
-            {...register("horaInicio", {
-              required: "Se requiere una hora de inicio.",
-            })}
-            min={selectedDate === minDateTime.date ? minDateTime.time : ""} // Hora actual como mínimo si es el día de hoy
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          />
-          {errors.horaInicio && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.horaInicio.message}
-            </p>
-          )}
-        </div>
+            <Label htmlFor="linkMeet">Link de Meet</Label>
+            <Input
+              type="text"
+              id="linkMeet"
+              {...register("linkMeet", {
+                required: "Se requiere un link de Meet.",
+                pattern: {
+                  value: /^https:\/\/meet\.google\.com\/[a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3}$/,
+                  message: "Ingresa un link de Google Meet válido.",
+                },
+              })}
+              placeholder="https://meet.google.com/xxx-xxxx-xxx"
+            />
+            {errors.linkMeet && (
+              <p className="text-red-500 text-xs mt-1">{errors.linkMeet.message}</p>
+            )}
+          </motion.div>
 
-        {/* Añade más campos según sea necesario */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.6 }}
+          >
+            <Label htmlFor="fechaInicio">Fecha de inicio</Label>
+            <Input
+              type="date"
+              id="fechaInicio"
+              {...register("fechaInicio", {
+                required: "Se requiere una fecha de inicio.",
+              })}
+              min={minDateTime.date}
+            />
+            {errors.fechaInicio && (
+              <p className="text-red-500 text-xs mt-1">{errors.fechaInicio.message}</p>
+            )}
+          </motion.div>
 
-        <button
-          type="submit"
-          className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-        >
-          Crear Tutoría
-        </button>
-      </form>
-    </>
-  );
-};
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.7 }}
+          >
+            <Label htmlFor="horaInicio">Hora de inicio</Label>
+            <Input
+              type="time"
+              id="horaInicio"
+              {...register("horaInicio", {
+                required: "Se requiere una hora de inicio.",
+              })}
+              min={selectedDate === minDateTime.date ? minDateTime.time : ""}
+            />
+            {errors.horaInicio && (
+              <p className="text-red-500 text-xs mt-1">{errors.horaInicio.message}</p>
+            )}
+          </motion.div>
 
-export default FormularioTutorias;
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.8 }}
+          >
+            <Button type="submit" className="w-full">
+              Crear Tutoría
+            </Button>
+          </motion.div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+export default FormularioTutorias
