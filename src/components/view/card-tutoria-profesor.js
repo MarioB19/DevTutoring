@@ -1,19 +1,21 @@
 import React from "react";
 import Image from "next/image";
-import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css"; 
-
+import { motion } from "framer-motion";
 import { format, parseISO } from 'date-fns';
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, Clock, DollarSign, Trash2, Video, BookOpen } from "lucide-react";
 import ToggleCardAlumno from "./toggle-card-alumno";
 
-const TutoriaCardProfesor = ({ tutoria, onEliminar , alumno}) => {
+const TutoriaCardProfesor = ({ tutoria, onEliminar, alumno }) => {
+  const formatDateString = (dateString) => {
+    const date = parseISO(dateString);
+    return format(date, 'dd/MM/yyyy');
+  };
 
-  function formatDateString(dateString) {
-    const date = parseISO(dateString); 
-    return format(date, 'dd/MM/yyyy'); 
-  }
-
-  
   const handleEliminarTutoria = (id) => {
     confirmAlert({
       title: "Confirmar eliminación",
@@ -43,83 +45,82 @@ const TutoriaCardProfesor = ({ tutoria, onEliminar , alumno}) => {
     horaInicio,
   } = tutoria;
 
-  var area = "";
-  switch (areaProgramacion) {
-    case "01":
-      area = "Programación Básica y Algorítmica";
-      break;
-    case "02":
-      area = "Desarrollo Web Frontend";
-      break;
-    case "03":
-      area = "Desarrollo Web Backend";
-      break;
+  const areasProgramacion = {
+    "01": "Programación Básica y Algorítmica",
+    "02": "Desarrollo Web Frontend",
+    "03": "Desarrollo Web Backend",
+    "04": "Desarrollo Móvil",
+  };
 
-    case "04":
-      area = "Desarrollo Móvil";
-      break;
-  }
-
+  const area = areasProgramacion[areaProgramacion] || "Área no especificada";
   const dateFormated = formatDateString(fechaInicio);
 
-
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden flex flex-col relative">
-      {fotografia && (
-        <div className="w-full h-48 relative">
-
-          <Image
-            src={fotografia}
-            alt={`Imagen de la tutoría ${titulo}`}
-            layout="fill"
-            className="rounded-t-lg"
-          />
-        </div>
-      )}
-      <div className="border-t border-purple-200 p-4 flex flex-col justify-between flex-grow">
-        <div className="mb-4">
-          <h3 className="text-gray-900 font-bold text-xl mb-2">{titulo}</h3>
-          <p className="text-gray-700 text-base mb-4">{descripcion}</p>
-          <p className="text-black text-base mb-2">Área: {area}</p>
-          <p className="text-red-600 text-xl mb-1">Costo: ${costo}</p>
-          <p className="text-green-900 font-bold text-base mb-2">Fecha: {dateFormated} a las {horaInicio}</p>
-          <a
-            href={linkMeet}
-            className="text-blue-600 hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Unirse a la reunión
-          </a>
-        </div>
-        <div className="mt-4">
-          <p
-            className={`text-sm font-semibold mb-4 ${
-              reservada ? "text-red-500" : "text-green-500"
-            }`}
-          >
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="overflow-hidden bg-white dark:bg-gray-800">
+        {fotografia && (
+          <div className="relative h-48 w-full">
+            <Image
+              src={fotografia}
+              alt={`Imagen de la tutoría ${titulo}`}
+              layout="fill"
+              objectFit="cover"
+              className="rounded-t-lg"
+            />
+          </div>
+        )}
+        <CardHeader>
+          <CardTitle>{titulo}</CardTitle>
+          <Badge variant={reservada ? "destructive" : "secondary"}>
             {reservada ? "Reservada" : "Disponible"}
-          </p>
-
-          {!reservada && (
-            <button
-              onClick={() => handleEliminarTutoria(id)}
-              className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1"
+          </Badge>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">{descripcion}</p>
+          <div className="flex items-center space-x-2">
+            <BookOpen className="h-4 w-4 text-purple-500" />
+            <span className="text-sm">{area}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Calendar className="h-4 w-4 text-purple-500" />
+            <span className="text-sm">{dateFormated}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Clock className="h-4 w-4 text-purple-500" />
+            <span className="text-sm">{horaInicio}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <DollarSign className="h-4 w-4 text-purple-500" />
+            <span className="text-lg font-semibold">${costo}</span>
+          </div>
+          <Button variant="outline" className="w-full" asChild>
+            <a
+              href={linkMeet}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Eliminar
-            </button>
+              <Video className="mr-2 h-4 w-4" /> Unirse a la reunión
+            </a>
+          </Button>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-4">
+          {!reservada && (
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={() => handleEliminarTutoria(id)}
+            >
+              <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+            </Button>
           )}
-
-
-          {reservada && (
-            <ToggleCardAlumno alumno={alumno}></ToggleCardAlumno>
-          )}
-
-       
-        </div>
-   
-      </div>
-    </div>
+          {reservada && <ToggleCardAlumno alumno={alumno} />}
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
 };
 

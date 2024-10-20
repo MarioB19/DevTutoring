@@ -1,68 +1,46 @@
-
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AlumnoCard from './card-alumno';
-import Image from "next/image";
 
-const ToggleCardAlumno = ({ alumno }) => { 
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
-
-  const handleImageClick = () => {
-    setMostrarTarjeta(true);
-  };
-
-  const handleClose = () => {
-    setMostrarTarjeta(false);
-  };
-
-  const handleBackdropClick = (e) => {
-    if (e.target.id === "backdrop") {
-      handleClose();
-    }
-  };
+const ToggleCardAlumno = ({ alumno }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div>
-          <div className="absolute bottom-0 right-0 mr-[1rem]"> 
-          <div className="w-12 h-12 mb-1 relative" onClick={handleImageClick} style={{ cursor: 'pointer' }}>
-      <Image
-        src= {alumno.fotoPerfil} 
-        alt="Foto del creador"
-        layout="fill"
-        className="rounded-full object-cover"
-      />
-    </div>
-
-
-  </div>
-      {mostrarTarjeta && (
-        <div
-          id="backdrop"
-          onClick={handleBackdropClick}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000,
-          }}
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <motion.div
+          className="absolute bottom-4 right-4 cursor-pointer"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <div onClick={(e) => e.stopPropagation()}>
-            <AlumnoCard
-              key={alumno.id}
-              nombreCompleto={alumno.nombreCompleto}
-              correoElectronico={alumno.correoElectronico}
-       
-              fotoPerfil={alumno.fotoPerfil}
-            />
-          </div>
-        </div>
-      )}
-    </div>
+          <Avatar className="w-12 h-12 border-2 border-purple-500">
+            <AvatarImage src={alumno.fotoPerfil} alt={`Foto de ${alumno.nombreCompleto}`} />
+            <AvatarFallback>{alumno.nombreCompleto.charAt(0)}</AvatarFallback>
+          </Avatar>
+        </motion.div>
+      </DialogTrigger>
+      <AnimatePresence>
+        {isOpen && (
+          <DialogContent className="sm:max-w-[425px]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              <AlumnoCard
+                key={alumno.id}
+                nombreCompleto={alumno.nombreCompleto}
+                correoElectronico={alumno.correoElectronico}
+                fotoPerfil={alumno.fotoPerfil}
+              />
+            </motion.div>
+          </DialogContent>
+        )}
+      </AnimatePresence>
+    </Dialog>
   );
 };
 

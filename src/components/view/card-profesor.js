@@ -1,42 +1,61 @@
 import React from "react";
 import Image from "next/image";
-import { UserIcon, MailIcon, AnnotationIcon } from "@heroicons/react/solid";
+import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { User, Mail, MessageSquare } from "lucide-react";
 
-const ProfesorCard = ({
-  fotoPerfil,
-  nombreCompleto,
-  correoElectronico,
-  descripcionPerfil,
-}) => {
+const ProfesorCard = ({ fotoPerfil, nombreCompleto, correoElectronico, descripcionPerfil }) => {
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
-      <div className="relative h-48 w-48 mx-auto">
-        <Image
-          src={fotoPerfil}
-          alt="Foto de perfil"
-          layout="fill"
-          className="rounded-full"
-        />
-      </div>
-      <div className="px-6 py-4">
-        <div className="flex items-center mb-3">
-          <UserIcon className="h-5 w-5 text-purple-500 mr-2" />
-          <span className="font-bold text-xl text-gray-800">
-            {nombreCompleto}
-          </span>
-        </div>
-        <div className="flex items-center mb-3">
-          <MailIcon className="h-5 w-5 text-purple-500 mr-2" />
-          <span className="text-gray-700 text-base">{correoElectronico}</span>
-        </div>
-        <div className="flex items-start mb-3">
-          <AnnotationIcon className="h-5 w-5 text-purple-500 mt-1 mr-2" />
-          <div className="overflow-y-auto overflow-x-hidden max-h-24 w-full text-gray-700 text-base p-1 whitespace-pre-wrap break-words">
-            {descripcionPerfil}
-          </div>
-        </div>
-      </div>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="overflow-hidden bg-white dark:bg-gray-800">
+        <CardHeader className="pb-2">
+          <motion.div
+            className="flex justify-center"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Avatar className="h-32 w-32">
+              <AvatarImage src={fotoPerfil} alt={nombreCompleto} />
+              <AvatarFallback>{nombreCompleto.charAt(0)}</AvatarFallback>
+            </Avatar>
+          </motion.div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <CardTitle className="flex items-center space-x-3 mb-2">
+              <User className="h-5 w-5 text-purple-500" />
+              <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                {nombreCompleto}
+              </span>
+            </CardTitle>
+            <div className="flex items-center space-x-3 mb-3">
+              <Mail className="h-5 w-5 text-purple-500" />
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {correoElectronico}
+              </span>
+            </div>
+            <div className="flex items-start space-x-3">
+              <MessageSquare className="h-5 w-5 text-purple-500 mt-1" />
+              <ScrollArea className="h-24 w-full rounded-md border p-2">
+                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">
+                  {descripcionPerfil}
+                </p>
+              </ScrollArea>
+            </div>
+          </motion.div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 

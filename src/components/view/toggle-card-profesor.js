@@ -1,52 +1,39 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { User } from 'lucide-react';
 import ProfesorCard from './card-profesor';
-import Image from "next/image";
 
-const ToggleCardProfesor = ({ profesor }) => { 
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
-
-  const handleImageClick = () => {
-    setMostrarTarjeta(true);
-  };
-
-  const handleClose = () => {
-    setMostrarTarjeta(false);
-  };
-
-  const handleBackdropClick = (e) => {
-    if (e.target.id === "backdrop") {
-      handleClose();
-    }
-  };
-
+const ToggleCardProfesor = ({ profesor }) => {
   return (
-    <div className="relative flex flex-col items-center">
-      <div className="w-24 h-24 mb-4 relative" onClick={handleImageClick} style={{ cursor: 'pointer' }}>
-        <Image
-          src={profesor.fotoPerfil}
-          alt="Foto del creador"
-          layout="fill"
-          className="rounded-full object-cover"
-        />
-      </div>
-      {mostrarTarjeta && (
-        <div
-          id="backdrop"
-          onClick={handleBackdropClick}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000,
-          }}
+    <Dialog>
+      <DialogTrigger asChild>
+        <motion.div
+          className="flex flex-col items-center"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <div onClick={(e) => e.stopPropagation()}>
+          <Avatar className="w-24 h-24 border-4 border-purple-500 cursor-pointer">
+            <AvatarImage src={profesor.fotoPerfil} alt={`Foto de ${profesor.nombreCompleto}`} />
+            <AvatarFallback>
+              <User className="w-12 h-12 text-purple-500" />
+            </AvatarFallback>
+          </Avatar>
+          <Button variant="link" className="mt-2 text-purple-600 hover:text-purple-800">
+            Ver perfil
+          </Button>
+        </motion.div>
+      </DialogTrigger>
+      <AnimatePresence>
+        <DialogContent className="sm:max-w-[425px]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+          >
             <ProfesorCard
               key={profesor.id}
               nombreCompleto={profesor.nombreCompleto}
@@ -54,10 +41,10 @@ const ToggleCardProfesor = ({ profesor }) => {
               descripcionPerfil={profesor.descripcionPerfil}
               fotoPerfil={profesor.fotoPerfil}
             />
-          </div>
-        </div>
-      )}
-    </div>
+          </motion.div>
+        </DialogContent>
+      </AnimatePresence>
+    </Dialog>
   );
 };
 
