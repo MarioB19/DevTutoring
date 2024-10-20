@@ -1,27 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { db } from "@/config/firebase-config-cliente";
-import { collection, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Users, BookOpen, LogOut, CheckCircle, XCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
+const MotionCard = motion(Card);
+const MotionButton = motion(Button);
 
 const AdminPanel = ({ initialAlumnos, initialProfesores, initialTutorias }) => {
-
-  const [alumnos, setAlumnos] = useState(initialAlumnos);
+  const [alumnos] = useState(initialAlumnos);
   const [profesores, setProfesores] = useState(initialProfesores);
-  const [tutorias, setTutorias] = useState(initialTutorias);
+  const [tutorias] = useState(initialTutorias);
 
   const acceptedProfesores = profesores.filter(profesor => profesor.aceptado === true);
   const pendingProfesores = profesores.filter(profesor => profesor.aceptado === false);
-
-  const handleDeleteAlumno = async (id) => {
-    await deleteDoc(doc(db, "alumnos", id));
-    setAlumnos(alumnos.filter(alumno => alumno.id !== id));
-  };
-
-  const handleDeleteProfesor = async (id) => {
-    await deleteDoc(doc(db, "profesores", id));
-    setProfesores(profesores.filter(profesor => profesor.id !== id));
-  };
 
   const handleAcceptProfesor = async (id) => {
     const profesorRef = doc(db, "profesores", id);
@@ -29,141 +25,231 @@ const AdminPanel = ({ initialAlumnos, initialProfesores, initialTutorias }) => {
     setProfesores(profesores.map(profesor => profesor.id === id ? { ...profesor, aceptado: true } : profesor));
   };
 
-  return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-black">Panel de Administración</h1>
-      
-          <div className="flex items-center">
-        
-            <Link href="/logout" passHref>
-              <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
-                Cerrar Sesión
-              </button>
-            </Link>
-          </div>
- 
-      </div>
+  const handleRejectProfesor = async (id) => {
+    await deleteDoc(doc(db, "profesores", id));
+    setProfesores(profesores.filter(profesor => profesor.id !== id));
+  };
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h2 className="text-xl font-bold text-black">Total de Profesores</h2>
-          <p className="text-2xl text-black">{acceptedProfesores.length}</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h2 className="text-xl font-bold text-black">Total de Alumnos</h2>
-          <p className="text-2xl text-black">{alumnos.length}</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h2 className="text-xl font-bold text-black">Total de Tutorías</h2>
-          <p className="text-2xl text-black">{tutorias.length}</p>
-        </div>
-      </div>
-      <Link href="/new">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded mb-4 hover:bg-blue-700">
-          Agregar Nuevo Alumno
-        </button>
-      </Link>
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4 text-black">Alumnos</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white shadow-md rounded-lg">
-            <thead>
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Completo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo Electrónico</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {alumnos.map(alumno => (
-                <tr key={alumno.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">{alumno.nombreCompleto}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{alumno.correoElectronico}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                    <Link href={`/edit/${alumno.id}`}>
-                      <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mr-2">Editar</button>
-                    </Link>
-                    <button
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-                      onClick={() => handleDeleteAlumno(alumno.id)}
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { 
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
+  return (
+    <motion.div 
+      className="container mx-auto p-4 space-y-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div className="flex justify-between items-center" variants={itemVariants}>
+        <h1 className="text-3xl font-bold text-purple-800">Panel de Administración</h1>
+        <Link href="/logout" passHref>
+          <MotionButton 
+            variant="destructive"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Cerrar Sesión
+          </MotionButton>
+        </Link>
+      </motion.div>
+
+      <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-4" variants={itemVariants}>
+        <MotionCard whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Profesores</CardTitle>
+            <Users className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <motion.div 
+              className="text-2xl font-bold"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 100, delay: 0.2 }}
+            >
+              {acceptedProfesores.length}
+            </motion.div>
+          </CardContent>
+        </MotionCard>
+        <MotionCard whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Alumnos</CardTitle>
+            <Users className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <motion.div 
+              className="text-2xl font-bold"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 100, delay: 0.3 }}
+            >
+              {alumnos.length}
+            </motion.div>
+          </CardContent>
+        </MotionCard>
+        <MotionCard whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Tutorías</CardTitle>
+            <BookOpen className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <motion.div 
+              className="text-2xl font-bold"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 100, delay: 0.4 }}
+            >
+              {tutorias.length}
+            </motion.div>
+          </CardContent>
+        </MotionCard>
+      </motion.div>
+
+      <motion.div className="space-y-6" variants={itemVariants}>
+        <div>
+          <h2 className="text-2xl font-bold text-purple-800 mb-4">Alumnos Registrados</h2>
+          <MotionCard
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre Completo</TableHead>
+                  <TableHead>Correo Electrónico</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <AnimatePresence>
+                  {alumnos.map(alumno => (
+                    <motion.tr
+                      key={alumno.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <TableCell className="font-medium">{alumno.nombreCompleto}</TableCell>
+                      <TableCell>{alumno.correoElectronico}</TableCell>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              </TableBody>
+            </Table>
+          </MotionCard>
         </div>
-      </div>
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4 text-black">Profesores</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white shadow-md rounded-lg">
-            <thead>
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Completo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo Electrónico</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {acceptedProfesores.map(profesor => (
-                <tr key={profesor.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">{profesor.nombreCompleto}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{profesor.correoElectronico}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                    <button
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-                      onClick={() => handleDeleteProfesor(profesor.id)}
+
+        <div>
+          <h2 className="text-2xl font-bold text-purple-800 mb-4">Profesores Aceptados</h2>
+          <MotionCard
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre Completo</TableHead>
+                  <TableHead>Correo Electrónico</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <AnimatePresence>
+                  {acceptedProfesores.map(profesor => (
+                    <motion.tr
+                      key={profesor.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <TableCell className="font-medium">{profesor.nombreCompleto}</TableCell>
+                      <TableCell>{profesor.correoElectronico}</TableCell>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              </TableBody>
+            </Table>
+          </MotionCard>
         </div>
-      </div>
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4 text-black">Solicitudes de Profesores</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white shadow-md rounded-lg">
-            <thead>
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Completo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo Electrónico</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {pendingProfesores.map(profesor => (
-                <tr key={profesor.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">{profesor.nombreCompleto}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{profesor.correoElectronico}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                    <button
-                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mr-2"
-                      onClick={() => handleAcceptProfesor(profesor.id)}
+
+        <div>
+          <h2 className="text-2xl font-bold text-purple-800 mb-4">Solicitudes de Profesores</h2>
+          <MotionCard
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre Completo</TableHead>
+                  <TableHead>Correo Electrónico</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <AnimatePresence>
+                  {pendingProfesores.map(profesor => (
+                    <motion.tr
+                      key={profesor.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      Aceptar
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-                      onClick={() => handleDeleteProfesor(profesor.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <TableCell className="font-medium">{profesor.nombreCompleto}</TableCell>
+                      <TableCell>{profesor.correoElectronico}</TableCell>
+                      <TableCell>
+                        <div className="space-x-2">
+                          <MotionButton
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleAcceptProfesor(profesor.id)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <CheckCircle className="mr-2 h-4 w-4" /> Aceptar
+                          </MotionButton>
+                          <MotionButton
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleRejectProfesor(profesor.id)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <XCircle className="mr-2 h-4 w-4" /> Rechazar
+                          </MotionButton>
+                        </div>
+                      </TableCell>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              </TableBody>
+            </Table>
+          </MotionCard>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
