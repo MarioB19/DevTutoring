@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
-import Navbar from "@/components/navbar";
-import { storage, db } from "@/config/firebase-config-cliente";
+import { useRouter } from "next/router";
+import { motion } from "framer-motion";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import ProtectedRoute from "@/controllers/controller-protected-route";
+import { db } from "@/config/firebase-config-cliente";
+import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import ProtectedRoute from "@/controllers/controller-protected-route";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Pencil } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+
 export default function Perfil({ user }) {
   const {
     register,
@@ -17,29 +25,36 @@ export default function Perfil({ user }) {
   } = useForm();
 
   const router = useRouter();
+  const [file, setFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(user.fotoUrl);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogContent, setDialogContent] = useState({ title: "", message: "" });
+
   const onSubmit = async (data) => {
-    const nombreCompleto = data.nombreCompleto;
-    const descripcionExperiencias = data.descripcionExperiencias;
     const profesorRef = doc(db, "profesores", user.uid);
 
     try {
       await updateDoc(profesorRef, {
-        nombreCompleto: nombreCompleto,
-        descripcionPerfil: descripcionExperiencias,
+        nombreCompleto: data.nombreCompleto,
+        descripcionPerfil: data.descripcionExperiencias,
       });
 
       await handleUploadImage();
 
-      alert("Informacion actualizada correctamente");
+      setDialogContent({
+        title: "Perfil actualizado",
+        message: "Tu información ha sido actualizada correctamente."
+      });
+      setIsDialogOpen(true);
 
-      router.reload();
     } catch (error) {
-      alert("Error al actualizar info: " + error);
+      setDialogContent({
+        title: "Error",
+        message: "Hubo un problema al actualizar tu información. Por favor, intenta de nuevo."
+      });
+      setIsDialogOpen(true);
     }
   };
-
-  const [file, setFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(user.fotoUrl);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -58,14 +73,11 @@ export default function Perfil({ user }) {
   const handleUploadImage = async () => {
     if (!file) return;
 
-    let imageUrl = "";
-
     const storage = getStorage();
     const storageRef = ref(storage, `fotoPerfil/profesor/${user.uid}`);
 
     const snapshot = await uploadBytes(storageRef, file);
-
-    imageUrl = await getDownloadURL(snapshot.ref);
+    const imageUrl = await getDownloadURL(snapshot.ref);
 
     const userRef = doc(db, "profesores", user.uid);
     await updateDoc(userRef, {
@@ -74,128 +86,136 @@ export default function Perfil({ user }) {
   };
 
   return (
-    <>
-    <ProtectedRoute requiredType={"profesor"}>
-      <Navbar />
-      <div className="max-w-lg mx-auto my-10">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Foto de perfil */}
-          <div className="relative mb-6 text-center">
-            {/* Muestra la imagen seleccionada o la imagen por defecto */}
-            <div className="relative w-24 h-24 mx-auto overflow-hidden rounded-full">
-              <Image
-                src={imagePreviewUrl}
-                layout="fill"
-                className="rounded-full"
-              />
-            </div>
-
-            <input
-              type="file"
-              id="imageInput"
-              hidden="hidden"
-              onChange={handleImageChange}
-              className="absolute top-0 right-0"
-            />
-            <button
-              type="button"
-              className="absolute bottom-0 right-0 bg-white p-1 rounded-full text-blue-500 hover:text-blue-600 focus:outline-none border border-gray-300"
-              onClick={handleEditPicture}
-              style={{ transform: "translate(50%, 50%)" }}
-            >
-              ✏️
-            </button>
-          </div>
-
-          {/* Nombre Completo */}
-          <div className="mb-6">
-            <label
-              htmlFor="nombreCompleto"
-              className="block mb-2 text-sm font-medium text-black"
-            >
-              Nombre Completo
-            </label>
-            <input
-              type="text"
-              id="nombreCompleto"
-              defaultValue={user.nombreCompleto}
-              {...register("nombreCompleto", {
-                required: "Este campo es obligatorio.",
-                minLength: {
-                  value: 10,
-                  message: "El nombre debe tener al menos 10 caracteres.",
-                },
-                maxLength: {
-                  value: 100,
-                  message: "El nombre no puede exceder los 100 caracteres.",
-                },
-              })}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-            {errors.nombreCompleto && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.nombreCompleto.message}
-              </p>
-            )}
-          </div>
-
-          <div className="mb-6">
-            <label
-              htmlFor="descripcionExperiencias"
-              className="block mb-2 text-sm font-medium text-black"
-            >
-              Descripción de Experiencias
-            </label>
-            <textarea
-              id="descripcionExperiencias"
-              defaultValue={user.descripcionExperiencias}
-              {...register("descripcionExperiencias", {
-                required: "Este campo es obligatorio.",
-                minLength: {
-                  value: 20,
-                  message: "La descripción debe tener al menos 10 caracteres.",
-                },
-              })}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-40 overflow-auto"
-            />
-            {errors.descripcionExperiencias && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.descripcionExperiencias.message}
-              </p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div className="mb-6">
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-black"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              readOnly
-              defaultValue={user.email}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
-
-          {/* Botón de envío */}
-          <button
-            type="submit"
-            className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+    <ProtectedRoute requiredType="profesor">
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 to-blue-200">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center px-4 py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-md"
           >
-            Actualizar perfil
-          </button>
-        </form>
-      </div>
-      <Footer></Footer>
-      </ProtectedRoute>
+            <Card className="bg-white shadow-xl rounded-xl overflow-hidden">
+              <CardHeader className="bg-blue-600 text-white p-6">
+                <CardTitle className="text-2xl font-bold text-center">Perfil de Profesor</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="relative mb-6 text-center">
+                    <div className="relative w-32 h-32 mx-auto overflow-hidden rounded-full">
+                      <Image src={imagePreviewUrl} layout="fill" objectFit="cover" className="rounded-full" alt="Profile" />
+                    </div>
+                    <input
+                      type="file"
+                      id="imageInput"
+                      hidden
+                      onChange={handleImageChange}
+                      className="absolute top-0 right-0"
+                    />
+                    <motion.button
+                      type="button"
+                      className="absolute bottom-0 right-0 bg-white p-2 rounded-full text-blue-500 hover:text-blue-600 focus:outline-none border border-gray-300 shadow-lg"
+                      onClick={handleEditPicture}
+                      style={{ transform: "translate(25%, 25%)" }}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <Pencil size={16} />
+                    </motion.button>
+                  </div>
 
-     
-    </>
+                  <div className="space-y-2">
+                    <Label htmlFor="nombreCompleto">Nombre Completo</Label>
+                    <Input
+                      id="nombreCompleto"
+                      defaultValue={user.nombreCompleto}
+                      {...register("nombreCompleto", {
+                        required: "Este campo es obligatorio.",
+                        minLength: {
+                          value: 10,
+                          message: "El nombre debe tener al menos 10 caracteres.",
+                        },
+                        maxLength: {
+                          value: 100,
+                          message: "El nombre no puede exceder los 100 caracteres.",
+                        },
+                      })}
+                    />
+                    {errors.nombreCompleto && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.nombreCompleto.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="descripcionExperiencias">Descripción de Experiencias</Label>
+                    <Textarea
+                      id="descripcionExperiencias"
+                      defaultValue={user.descripcionExperiencias}
+                      {...register("descripcionExperiencias", {
+                        required: "Este campo es obligatorio.",
+                        minLength: {
+                          value: 20,
+                          message: "La descripción debe tener al menos 20 caracteres.",
+                        },
+                      })}
+                      className="h-40"
+                    />
+                    {errors.descripcionExperiencias && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.descripcionExperiencias.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      type="email"
+                      id="email"
+                      readOnly
+                      defaultValue={user.email}
+                    />
+                  </div>
+                </form>
+              </CardContent>
+              <CardFooter className="bg-gray-50 p-6">
+                <Button 
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  Actualizar perfil
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
+        </main>
+        <Footer />
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle className="text-black font-bold">{dialogContent.title}</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-black">{dialogContent.message}</p>
+            </div>
+            <DialogFooter>
+              <Button onClick={() => {
+                setIsDialogOpen(false);
+                if (dialogContent.title === "Perfil actualizado") {
+                  router.reload();
+                }
+              }}>
+                Cerrar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </ProtectedRoute>
   );
 }
 
@@ -214,13 +234,12 @@ export async function getServerSideProps(context) {
   const user = {
     nombreCompleto: docSnap.data().nombreCompleto,
     email: docSnap.data().correoElectronico,
-    fotoUrl: docSnap.data().fotoPerfil, 
+    fotoUrl: docSnap.data().fotoPerfil,
     descripcionExperiencias: docSnap.data().descripcionPerfil,
-
     uid: uid,
   };
 
   return {
-    props: { user }, // Pasar el usuario como prop
+    props: { user },
   };
 }

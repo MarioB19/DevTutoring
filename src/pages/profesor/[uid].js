@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/navbar";
 import { Tutoria } from "@/models/tutoria";
 import { db } from "@/config/firebase-config-cliente";
@@ -12,12 +13,14 @@ import {
   deleteDoc,
   getDoc,
 } from "firebase/firestore";
-import { isFuture, isPast, parseISO } from "date-fns"; 
+import { isFuture, isPast, parseISO } from "date-fns";
 import TutoriaCardProfesor from "@/components/view/card-tutoria-profesor";
 import ProtectedRoute from "@/controllers/controller-protected-route";
 import Footer from "@/components/footer";
-
-
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, Plus } from "lucide-react";
 
 export async function getServerSideProps(context) {
   const { uid } = context.params;
@@ -58,13 +61,10 @@ export async function getServerSideProps(context) {
   };
 }
 
-
-
 const GestorTutorias = ({ tutoriasConAlumnos }) => {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
   const [vistaActiva, setVistaActiva] = useState("futuras");
-
 
   const tutoriasFiltradas = tutoriasConAlumnos.filter(({ tutoria }) =>
     tutoria.titulo.toLowerCase().includes(busqueda.toLowerCase())
@@ -96,66 +96,102 @@ const GestorTutorias = ({ tutoriasConAlumnos }) => {
   };
 
   return (
-    <>
-    <ProtectedRoute requiredType={"profesor"}>
-      <Navbar />
-      <div className="container mx-auto p-4">
-        <div className="flex justify-end items-center mb-6">
-          <button
-            className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => router.push("/profesor/crear-tutoria")}
-          >
-            Crear Tutoría
-          </button>
-        </div>
-        <div className="text-center mt-4 mb-8">
-          <input
-            type="text"
-            placeholder="Buscar tutorías..."
-            className="text-black mb-4 p-2 border rounded shadow w-1/2 bg-purple-100 border-purple-500 placeholder-purple-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
-            value={busqueda}
-            onChange={handleSearch}
-          />
-        </div>
-        <div className="flex justify-center space-x-4 mb-6">
-          <button
-            className={`px-4 py-2 rounded ${
-              vistaActiva === "futuras"
-                ? "bg-purple-700 text-white"
-                : "bg-white text-purple-700"
-            }`}
-            onClick={() => setVistaActiva("futuras")}
-          >
-            Tutorías Futuras
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              vistaActiva === "pasadas"
-                ? "bg-purple-700 text-white"
-                : "bg-white text-purple-700"
-            }`}
-            onClick={() => setVistaActiva("pasadas")}
-          >
-            Tutorías Pasadas
-          </button>
-        </div>
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          {(vistaActiva === "futuras" ? tutoriasFuturas : tutoriasPasadas).map(
-            ({ tutoria, alumno }) => (
-              <TutoriaCardProfesor
-                key={tutoria.id}
-                tutoria={tutoria}
-                alumno={alumno} 
-                onEliminar={() => handleEliminarTutoria(tutoria.id)}
-              />
-            )
-          )}
-        </div>
-      </div>
-      </ProtectedRoute>
+    <ProtectedRoute requiredType="profesor">
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 to-purple-200 flex flex-col">
+        <Navbar />
+        <main className="flex-grow container mx-auto p-4 pt-8">
+          <Card className="mb-8">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-2xl font-bold text-purple-800">
+                Gestor de Tutorías
+              </CardTitle>
+              <Button
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+                onClick={() => router.push("/profesor/crear-tutoria")}
+              >
+                <Plus className="mr-2 h-4 w-4" /> Crear Tutoría
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-center mb-6">
+                <div className="relative w-full max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Buscar tutorías..."
+                    className="pl-10 pr-4 py-2 w-full border rounded-full shadow focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    value={busqueda}
+                    onChange={handleSearch}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-center space-x-4 mb-6">
+                <Button
+                  variant={vistaActiva === "futuras" ? "default" : "outline"}
+                  onClick={() => setVistaActiva("futuras")}
+                  className="w-40"
+                >
+                  Tutorías Futuras
+                </Button>
+                <Button
+                  variant={vistaActiva === "pasadas" ? "default" : "outline"}
+                  onClick={() => setVistaActiva("pasadas")}
+                  className="w-40"
+                >
+                  Tutorías Pasadas
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
-      <Footer></Footer>
-    </>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={vistaActiva}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {(vistaActiva === "futuras" ? tutoriasFuturas : tutoriasPasadas).map(
+                ({ tutoria, alumno }) => (
+                  <motion.div
+                    key={tutoria.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <TutoriaCardProfesor
+                      tutoria={tutoria}
+                      alumno={alumno}
+                      onEliminar={() => handleEliminarTutoria(tutoria.id)}
+                    />
+                  </motion.div>
+                )
+              )}
+            </motion.div>
+          </AnimatePresence>
+          
+          {(vistaActiva === "futuras" ? tutoriasFuturas : tutoriasPasadas).length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-center py-12"
+            >
+              <Card>
+                <CardContent className="p-6">
+                  <p className="text-lg text-gray-600">
+                    No hay tutorías {vistaActiva === "futuras" ? "futuras" : "pasadas"} disponibles.
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </main>
+        <Footer />
+      </div>
+    </ProtectedRoute>
   );
 };
 
