@@ -1,9 +1,3 @@
-E-commerce made in next js, with Firebase and Tailwind css
+# E-commerce web application developed in Next.js, focused on selling programming tutorials. It integrates PayPal API for payment processing, uses Firebase as backend as a service, and incorporates animations with Framer Motion and Shadcn components for a smooth and dynamic user experience.
 
-
-//TODO: Todo a nivel de firestore ya funciona, asimismo como seguridad y proteccion de rutas, solo falta implementar gestion de Authentication en ciertas cuestiones con el admin, cosas por hacer.
-
-- Revisar Authenticationa al crear usuario manual
-- Yo no implementaria la opcion de editar alumno
-- Si se edita correo, contemplarlo en el auth
-- Si se borra un usuario, tambien borrarlo en el auth
+`Employ v0.dev for UI`
